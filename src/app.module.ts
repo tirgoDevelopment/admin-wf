@@ -7,7 +7,6 @@ import { MainModule } from './main/main.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './shared/auth/auth.guard';
 import { UploadModule } from './shared/upload/upload.module';
-import { RabbitMQModule } from './shared/modules/rabbitmq.module';
 
 @Module({
   imports: [
@@ -24,15 +23,14 @@ import { RabbitMQModule } from './shared/modules/rabbitmq.module';
     }),
     MainModule,
     UploadModule,
-    RabbitMQModule
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
   ],
 })
 export class AppModule { }

@@ -1,5 +1,7 @@
 import { Module } from "@nestjs/common";
 import { SundryService } from "../services/sundry.service";
+import { RabbitMQSenderService } from "../services/rabbitmq-sender.service";
+import { RabbitMQConsumerService } from "../services/rabbitmq-consumer.service";
 
 @Module({
   imports: [
@@ -7,10 +9,14 @@ import { SundryService } from "../services/sundry.service";
   controllers: [
   ],
   providers: [
-    SundryService
+    SundryService,
+    RabbitMQSenderService,
+    RabbitMQConsumerService
   ],
   exports: [
-    SundryService
+    SundryService,
+    RabbitMQSenderService,
+    RabbitMQConsumerService
   ]
 })
 export class SharedModule {
