@@ -14,7 +14,7 @@ export class Role {
   description: string;
 
   @OneToOne(() => Permission, { cascade: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'permission_id' })
   permission: Permission;
 
   @OneToMany(() => User, user => user.role)
