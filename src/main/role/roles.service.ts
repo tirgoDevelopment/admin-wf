@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BpmResponse, ResponseStauses } from '..';
 import { Permission } from './entities/permission.entity';
 import { Role } from './entities/role.entity';
 import { RoleDto } from './role.dto';
+import { InternalErrorException } from 'src/shared/exceptions/internal.exception';
+import { BadRequestException } from 'src/shared/exceptions/bad-request.exception';
+import { NoContentException } from 'src/shared/exceptions/no-content.exception';
 
 @Injectable()
 export class RolesService {
@@ -54,7 +57,7 @@ export class RolesService {
     } catch (err: any) {
       console.log(err)
       await queryRunner.rollbackTransaction();
-      return new BpmResponse(false, null, [ResponseStauses.CreateDataFailed]);
+      throw new InternalErrorException(ResponseStauses.CreateDataFailed);
     } finally {
       await queryRunner.release();
     }
@@ -109,13 +112,19 @@ export class RolesService {
 
   async getRoleById(id: string): Promise<BpmResponse> {
     try {
-      const role = await this.rolesRepository.findOneOrFail({ where: { id, deleted: false } });
-      if (!role) {
-        return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+      if (!id) {
+        throw new BadRequestException(ResponseStauses.IdIsRequired);
       }
+      const role = await this.rolesRepository.findOneOrFail({ where: { id, deleted: false } });
       return new BpmResponse(true, role, null);
     } catch (err: any) {
-      return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+      if (err.name == 'EntityNotFoundError') {
+        // Client not found
+        throw new NoContentException();
+      } else {
+        // Other error (handle accordingly)
+        throw new InternalErrorException(ResponseStauses.InternalServerError, err.message)
+      }
     }
   }
 
@@ -123,11 +132,19 @@ export class RolesService {
     try {
       const roles = await this.rolesRepository.find({ where: { deleted: false }, relations: ['permission'] });
       if (!roles.length) {
-        return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+        throw new NoContentException();
       }
       return new BpmResponse(true, roles, null);
     } catch (err: any) {
-      return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+      if (err.name == 'EntityNotFoundError') {
+        // Client not found
+        throw new NoContentException();
+      } else if (err instanceof HttpException) {
+        throw err
+      } else {
+        // Other error (handle accordingly)
+        throw new InternalErrorException(ResponseStauses.InternalServerError, err.message)
+      }
     }
   }
 
@@ -136,11 +153,19 @@ export class RolesService {
     try {
       const permissions = await this.permissionsRepository.find({ where: { deleted: false } });
       if (!permissions.length) {
-        return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+        throw new NoContentException();
       }
       return new BpmResponse(true, permissions, null);
     } catch (err: any) {
-      return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+      if (err.name == 'EntityNotFoundError') {
+        // Client not found
+        throw new NoContentException();
+      } else if (err instanceof HttpException) {
+        throw err
+      } else {
+        // Other error (handle accordingly)
+        throw new InternalErrorException(ResponseStauses.InternalServerError, err.message)
+      }
     }
   }
 }
