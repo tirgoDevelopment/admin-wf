@@ -1,28 +1,18 @@
-import { Module } from "@nestjs/common";
+import { Module } from '@nestjs/common';
+import { UsersService } from './users.service';
+import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from "./user.entity";
-import { UsersController } from "./users.controller";
-import { UsersService } from "./users.service";
-import { SharedModule } from "src/shared/modules/shared.module";
-import { RolesModule } from "../role/roles.module";
+import { User } from './user.entity';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([User]),
-        SharedModule,
-        RolesModule
-    ],
-    controllers: [
-        UsersController,
-    ],
-    providers: [
-        UsersService,
-    ],
-    exports: [
-        TypeOrmModule.forFeature([User]),
-        UsersService
-    ]
+  imports: [
+    TypeOrmModule.forFeature([User]),
+],
+  providers: [UsersService],
+  controllers: [UsersController],
+  exports: [
+    UsersService,
+    TypeOrmModule.forFeature([User]),
+  ]
 })
-export class UsersModule {
-
-}
+export class UsersModule {}

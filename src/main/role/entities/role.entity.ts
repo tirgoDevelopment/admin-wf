@@ -1,4 +1,4 @@
-import { User } from '../../users/user.entity';
+import { Staff } from '../../staffs/staff.entity';
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
 import { Permission } from './permission.entity';
 
@@ -17,8 +17,8 @@ export class Role {
   @JoinColumn({ name: 'permission_id' })
   permission: Permission;
 
-  @OneToMany(() => User, user => user.role)
-  users: User[];
+  @OneToMany(() => Staff, user => user.role)
+  users: Staff[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
   createdAt: Date;
