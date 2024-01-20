@@ -1,4 +1,4 @@
-import { User } from 'src/main/users/user.entity';
+import { Staff } from 'src/main/staffs/staff.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -24,8 +24,8 @@ export class TransportType {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
   createdAt: Date;
 
-  @ManyToOne(() => User, user => user.transportTypes)
-  createdBy: User;
+  @ManyToOne(() => Staff, user => user.transportTypes)
+  createdBy: Staff;
 
   @Column({ default: true })
   active: boolean;

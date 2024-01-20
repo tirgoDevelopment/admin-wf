@@ -19,7 +19,6 @@ import { UploadModule } from './shared/upload/upload.module';
       entities: entities,
       database: 'tirgo',
       synchronize: true,
-      logging: true,
     }),
     MainModule,
     UploadModule,

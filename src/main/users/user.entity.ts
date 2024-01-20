@@ -1,36 +1,20 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
-import { Role } from '../role/entities/role.entity';
-import { TransportType } from '../references/entities/transport-type.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Staff } from '../staffs/staff.entity';
+// import { Transaction } from '../transactions/transaction.entity';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @Column({ nullable: false, name: 'fullname' })
-  fullName: string;
+    @Column({ nullable: false, name: 'user_type' })
+    userType: string;
 
-  @Column({ nullable: false, unique: true })
-  username: string;
+    // OneToOne relationship with Client
+    @OneToOne(() => Staff, (staff) => staff.user, { cascade: true })
+    @JoinColumn({ name: 'staff_id' })
+    staff: Staff;
 
-  @Column({ nullable: false })
-  phone: string;
-
-  @ManyToOne(() => Role, role => role.users)
-  role: Role;
-
-  @OneToMany(() => TransportType, transportType => transportType.createdBy)
-  transportTypes: TransportType[];
-
-  @Column({ type: 'varchar', nullable: false })
-  password: string;
-
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
-  createdAt: Date;
-
-  @Column({ default: true })
-  active: boolean;
-
-  @Column({ default: false })
-  deleted: boolean;
+    // @OneToMany(() => Transaction, (transaction) => transaction.user)
+    // transactions: Transaction[];
 }

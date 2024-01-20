@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsString, IsUUID, Matches, MaxLength, MinLength, UUIDVersion } from "class-validator";
 
-export class CreateUserDto {
+export class CreateStaffDto {
 
   @IsString()
   @IsNotEmpty()
@@ -26,7 +26,7 @@ export class CreateUserDto {
   password: string;
 }
 
-export class UpdateUserDto {
+export class UpdateStaffDto {
 
   id: number;
   @IsString()

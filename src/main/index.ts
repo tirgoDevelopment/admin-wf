@@ -1,20 +1,23 @@
 import { TransportType } from "./references/entities/transport-type.entity";
 import { Permission } from "./role/entities/permission.entity";
 import { Role } from "./role/entities/role.entity";
+import { Staff } from "./staffs/staff.entity";
 import { User } from "./users/user.entity";
 
 const entities = [
-  User,
+  Staff,
   Role,
   Permission,
-  TransportType
+  TransportType,
+  User
 ];
 
 export {
-  User,
+  Staff,
   Role,
   Permission,
-  TransportType
+  TransportType,
+  User
 };
 export default entities;
 
