@@ -1,10 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SundryService } from 'src/shared/services/sundry.service';
 import { EntityNotFoundError, Repository } from 'typeorm';
 import { BpmResponse, ResponseStauses, Role, User } from '..';
 import { CreateStaffDto, UpdateStaffDto } from './staff.dto';
 import { Staff } from './staff.entity';
+import { InternalErrorException } from 'src/shared/exceptions/internal.exception';
+import { NoContentException } from 'src/shared/exceptions/no-content.exception';
+import { BadRequestException } from 'src/shared/exceptions/bad-request.exception';
+import { NotFoundException } from '../../shared/exceptions/not-found.exception';
 
 @Injectable()
 export class StaffsService {
@@ -34,14 +38,14 @@ export class StaffsService {
       const user = await this.usersRepository.save({ userType: 'staff', client: newStaff });
       if(!user) {
         await queryRunner.rollbackTransaction(); 
-        throw new Error('Create user failed');
+        throw new InternalErrorException(ResponseStauses.CreateDataFailed);
       }
 
       newStaff.user = user;
       const resClient = await this.staffRepository.update({ id: staff.id }, newStaff);
       if(!resClient.affected) {
         await queryRunner.rollbackTransaction();
-        throw new Error('Attach uesr to client failed');
+        throw new InternalErrorException(ResponseStauses.InternalServerError, 'Attach uesr to client failed');
       }
 
         // Commit the transaction
@@ -49,12 +53,12 @@ export class StaffsService {
       return new BpmResponse(true, null, [ResponseStauses.SuccessfullyCreated]);
     } catch (err: any) {
       await queryRunner.rollbackTransaction();
-      if (err instanceof EntityNotFoundError) {
+      if (err.name === "EntityNotFoundError") {
         // Staff not found
-        return new BpmResponse(false, null, ['Role not Found']);
+       throw new NoContentException();
       } else {
         // Other error (handle accordingly)
-        return new BpmResponse(false, null, [ResponseStauses.InternalServerError]);
+        throw new InternalErrorException(ResponseStauses.InternalServerError);
       }
     }
   }
@@ -70,23 +74,33 @@ export class StaffsService {
       await this.staffRepository.update({ id: staff.id }, staff);
       return new BpmResponse(true, null, [ResponseStauses.SuccessfullyUpdated]);
     } catch (err: any) {
-      return new BpmResponse(false, null, [ResponseStauses.UpdateDataFailed]);
+      if (err.name === "EntityNotFoundError") {
+        if(err.message.includes('rolesRepository')) {
+          throw new NotFoundException(ResponseStauses.RoleNotFound);
+        }
+        if(err.message.includes('staffRepository')) {
+          throw new NotFoundException(ResponseStauses.StaffNotFound);
+        }
+      } else {
+        // Other error (handle accordingly)
+        throw new InternalErrorException(ResponseStauses.InternalServerError);
+      }
     }
   }
 
   async getStaffById(id: number): Promise<BpmResponse> {
     if(!id) {
-      return new BpmResponse(false, null, ['Id id required']);
+      throw new BadRequestException(ResponseStauses.IdIsRequired);
     }
     try {
       const staff = await this.staffRepository.findOneOrFail({ where: { id, deleted: false } });
-      console.log(staff)
-      if (!staff) {
-        return new BpmResponse(false, null, [ResponseStauses.NotFound]);
-      }
       return new BpmResponse(true, staff, null);
     } catch (err: any) {
-      return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+      if(err.name == 'EntityNotFoundError') {
+        throw new NoContentException();
+      } else {
+        throw new InternalErrorException(ResponseStauses.InternalServerError, err.message);
+      }
     }
   }
 
@@ -112,11 +126,15 @@ export class StaffsService {
     try {
       const staffs = await this.staffRepository.find({ where: { deleted: false }, relations: ['role', 'role.permission'] });
       if (!staffs.length) {
-        return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+        throw new NoContentException();
       }
       return new BpmResponse(true, staffs, null);
     } catch (err: any) {
-      return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+      if(err instanceof HttpException) {
+        throw err
+      } else {
+        throw new InternalErrorException(ResponseStauses.InternalServerError, err.message);
+      }
     }
   }
 
@@ -124,11 +142,15 @@ export class StaffsService {
     try {
       const staffs = await this.staffRepository.find({ where: { active: true, deleted: false } });
       if (!staffs.length) {
-        return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+        throw new NoContentException();
       }
       return new BpmResponse(true, staffs, null);
     } catch (err: any) {
-      return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+      if(err instanceof HttpException) {
+        throw err
+      } else {
+        throw new InternalErrorException(ResponseStauses.InternalServerError, err.message);
+      }
     }
   }
 
@@ -136,11 +158,15 @@ export class StaffsService {
     try {
       const staffs = await this.staffRepository.find({ where: { active: false, deleted: false } });
       if (!staffs.length) {
-        return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+        throw new NoContentException();
       }
       return new BpmResponse(true, staffs, null);
     } catch (err: any) {
-      return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+      if(err instanceof HttpException) {
+        throw err
+      } else {
+        throw new InternalErrorException(ResponseStauses.InternalServerError, err.message);
+      }
     }
   }
 
@@ -148,21 +174,28 @@ export class StaffsService {
     try {
       const staffs = await this.staffRepository.find({ where: { deleted: true } });
       if (!staffs.length) {
-        return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+        throw new NoContentException();
       }
       return new BpmResponse(true, staffs, null);
     } catch (err: any) {
-      return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+      if(err instanceof HttpException) {
+        throw err
+      } else {
+        throw new InternalErrorException(ResponseStauses.InternalServerError, err.message);
+      }
     }
   }
 
   async deleteStaff(id: number): Promise<BpmResponse> {
     try {
+      if(!id) {
+        throw new BadRequestException(ResponseStauses.IdIsRequired);
+      }
       const staff = await this.staffRepository.findOneOrFail({ where: { id } });
 
       if (staff.deleted) {
-        // Staff is already deleted
-        return new BpmResponse(false, null, [ResponseStauses.AlreadyDeleted]);
+        // Staff is already deleted 
+        throw new BadRequestException(ResponseStauses.AlreadyDeleted);
       }
 
       const updateResult = await this.staffRepository.update({ id: staff.id }, { deleted: true });
@@ -172,26 +205,30 @@ export class StaffsService {
         return new BpmResponse(true, null, null);
       } else {
         // Update did not affect any rows
-        return new BpmResponse(false, null, [ResponseStauses.NotModified]);
+        throw new InternalErrorException(ResponseStauses.NotModified);
       }
     } catch (err: any) {
       if (err instanceof EntityNotFoundError) {
         // Staff not found
-        return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+        throw new NoContentException();
+      } else if(err instanceof HttpException) {
+        throw err
       } else {
-        // Other error (handle accordingly)
-        return new BpmResponse(false, null, [ResponseStauses.InternalServerError]);
+        throw new InternalErrorException(ResponseStauses.InternalServerError, err.message);
       }
     }
   }
 
   async blockStaff(id: number): Promise<BpmResponse> {
     try {
+      if(!id) {
+        throw new BadRequestException(ResponseStauses.IdIsRequired);
+      }
       const staff = await this.staffRepository.findOneOrFail({ where: { id } });
 
       if (!staff.active) {
         // Staff is already blocked
-        return new BpmResponse(false, null, [ResponseStauses.AlreadyBlocked]);
+          throw new BadRequestException(ResponseStauses.AlreadyBlocked);
       }
 
       const updateResult = await this.staffRepository.update({ id: staff.id }, { active: false });
@@ -201,26 +238,29 @@ export class StaffsService {
         return new BpmResponse(true, null, null);
       } else {
         // Update did not affect any rows
-        return new BpmResponse(false, null, [ResponseStauses.NotModified]);
+        throw new InternalErrorException(ResponseStauses.NotModified);
       }
     } catch (err: any) {
       if (err instanceof EntityNotFoundError) {
         // Staff not found
-        return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+        throw new NoContentException()
       } else {
         // Other error (handle accordingly)
-        return new BpmResponse(false, null, [ResponseStauses.InternalServerError]);
+        throw new InternalErrorException(ResponseStauses.InternalServerError);
       }
     }
   }
 
   async activateStaff(id: number): Promise<BpmResponse> {
     try {
+      if(!id) {
+        throw new BadRequestException(ResponseStauses.IdIsRequired);
+      }
       const staff = await this.staffRepository.findOneOrFail({ where: { id } });
 
       if (staff.active) {
         // Staff is already blocked
-        return new BpmResponse(false, null, [ResponseStauses.AlreadyActive]);
+        throw new BadRequestException(ResponseStauses.AlreadyActive);
       }
 
       const updateResult = await this.staffRepository.update({ id: staff.id }, { active: true });
@@ -230,15 +270,17 @@ export class StaffsService {
         return new BpmResponse(true, null, null);
       } else {
         // Update did not affect any rows
-        return new BpmResponse(false, null, [ResponseStauses.NotModified]);
+        throw new InternalErrorException(ResponseStauses.NotModified);
       }
     } catch (err: any) {
       if (err instanceof EntityNotFoundError) {
         // Staff not found
-        return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+        throw new NoContentException();
+      } else if(err instanceof HttpException) {
+        throw err
       } else {
         // Other error (handle accordingly)
-        return new BpmResponse(false, null, [ResponseStauses.InternalServerError]);
+        throw new InternalErrorException(ResponseStauses.InternalServerError);
       }
     }
   }

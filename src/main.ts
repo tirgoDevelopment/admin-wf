@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { GlobalExceptionFilter } from './shared/interceptors/exception.interceptor';
+import { HttpExceptionFilter } from './shared/filters/exception.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // app.useGlobalFilters(new GlobalExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter());
   await app.listen(3000);
 }
 bootstrap();
