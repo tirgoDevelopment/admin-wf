@@ -62,9 +62,7 @@ export class CargoTypeGroupsService {
 
     async getAllCargoTypeGroups(): Promise<BpmResponse> {
         try {
-            console.log('asd')
             const cargoTypeGroups = await this.cargoTypeGroupsRepository.find({ where: { deleted: false }, relations: ['cargoTypes'] });
-            console.log(cargoTypeGroups)
             if (!cargoTypeGroups.length) {
                 throw new NoContentException();
             }
