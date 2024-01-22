@@ -1,3 +1,5 @@
+import { CargoTypeGroup } from "./references/entities/cargo-type-group.entity";
+import { CargoType } from "./references/entities/cargo-type.entity";
 import { TransportType } from "./references/entities/transport-type.entity";
 import { Permission } from "./role/entities/permission.entity";
 import { Role } from "./role/entities/role.entity";
@@ -9,7 +11,9 @@ const entities = [
   Role,
   Permission,
   TransportType,
-  User
+  User,
+  CargoType,
+  CargoTypeGroup
 ];
 
 export {
@@ -17,7 +21,9 @@ export {
   Role,
   Permission,
   TransportType,
-  User
+  User,
+  CargoType,
+  CargoTypeGroup
 };
 export default entities;
 
