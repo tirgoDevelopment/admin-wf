@@ -1,13 +1,10 @@
 import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
-export class CargoTypeDto {
+export class CargoTypeGroupDto {
   
   id?: string;
 
   @IsString()
   @IsNotEmpty()
   name: string;
-
-  @IsNotEmpty()
-  cargoTypeGroupId: string;
-  }
+}
