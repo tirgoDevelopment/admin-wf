@@ -35,7 +35,6 @@ export class CargoTypeGroupsController {
 
   @Get('all')
   async getAllCargoTypeGroups() {
-    console.log('add')
     return this.cargoTypeGroupsService.getAllCargoTypeGroups();
   }
 
