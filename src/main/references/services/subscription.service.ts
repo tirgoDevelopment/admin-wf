@@ -1,20 +1,18 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SundryService } from 'src/shared/services/sundry.service';
 import { EntityNotFoundError, Repository } from 'typeorm';
-import { BpmResponse, ResponseStauses, Role, User } from '..';
-import { SubscriptionDto } from './sbscription.dto';
-import { Subscription } from './subscription.entity';
 import { InternalErrorException } from 'src/shared/exceptions/internal.exception';
 import { NoContentException } from 'src/shared/exceptions/no-content.exception';
 import { BadRequestException } from 'src/shared/exceptions/bad-request.exception';
-import { NotFoundException } from '../../shared/exceptions/not-found.exception';
+import { Subscription } from '../entities/subscription.entity';
+import { SubscriptionDto } from '../dtos/subscription.dto';
+import { BpmResponse, ResponseStauses } from 'src/main/index';
 
 @Injectable()
 export class SubscriptionsService {
   constructor(
     @InjectRepository(Subscription) private readonly subscriptionRepository: Repository<Subscription>,
-    @InjectRepository(Role) private readonly rolesRepository: Repository<Role>,
   ) { }
 
   async createSubscription(createSubscriptionDto: SubscriptionDto): Promise<BpmResponse> {

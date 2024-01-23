@@ -9,13 +9,18 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { SubscriptionDto } from './sbscription.dto';
-import { SubscriptionsService } from './subscription.service';
+import { SubscriptionsService } from '../services/subscription.service';
+import { SubscriptionDto } from '../dtos/subscription.dto';
 
 @Controller('api/v2/subscriptions')
 export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) { }
 
+  @Post()
+  @UsePipes(ValidationPipe)
+  async createTransportType(@Body() createSubscriptionDto: SubscriptionDto) {
+    return this.subscriptionsService.createSubscription(createSubscriptionDto);
+  }
 
   @Put()
   @UsePipes(ValidationPipe)

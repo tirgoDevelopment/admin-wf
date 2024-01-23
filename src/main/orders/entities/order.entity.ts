@@ -51,7 +51,7 @@ export class Order {
   transportType: TransportType;
 
   @Column({ nullable: true })
-  cargoStatus
+  cargoStatus: number;
 
   @Column({ nullable: true })
   isSafeTransaction: boolean;
