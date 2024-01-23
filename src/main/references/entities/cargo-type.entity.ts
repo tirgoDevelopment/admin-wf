@@ -1,5 +1,6 @@
+import { Order } from 'src/main/orders/entities/order.entity';
 import { Staff } from 'src/main/staffs/staff.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { CargoTypeGroup } from './cargo-type-group.entity';
 
 @Entity()
@@ -21,4 +22,7 @@ export class CargoType {
 
   @Column({ default: false })
   deleted: boolean;
+
+  @OneToMany(() => Order, order => order.cargoType)
+  orders: Order[];
 }

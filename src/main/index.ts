@@ -1,5 +1,10 @@
+import { Client } from "./clients/client.entity";
+import { Order } from "./orders/entities/order.entity";
+import { CargoStatus } from "./references/entities/cargo-status.entity";
 import { CargoTypeGroup } from "./references/entities/cargo-type-group.entity";
 import { CargoType } from "./references/entities/cargo-type.entity";
+import { Currency } from "./references/entities/currency.entity";
+import { Subscription, } from "./references/entities/subscription.entity";
 import { TransportType } from "./references/entities/transport-type.entity";
 import { Permission } from "./role/entities/permission.entity";
 import { Role } from "./role/entities/role.entity";
@@ -13,7 +18,12 @@ const entities = [
   TransportType,
   User,
   CargoType,
-  CargoTypeGroup
+  CargoTypeGroup,
+  Client,
+  Currency,
+  Subscription,
+  Order,
+  CargoStatus
 ];
 
 export {
@@ -23,7 +33,12 @@ export {
   TransportType,
   User,
   CargoType,
-  CargoTypeGroup
+  CargoTypeGroup,
+  Client,
+  Currency,
+  Subscription,
+  Order,
+  CargoStatus
 };
 export default entities;
 
@@ -32,9 +47,9 @@ export class BpmResponse {
   data: any;
   messages: string[];
   constructor(success: boolean, data: any, messages?: string[]) {
-      this.success = success;
-      this.data = data;
-      this.messages = messages;
+    this.success = success;
+    this.data = data;
+    this.messages = messages;
   }
 }
 

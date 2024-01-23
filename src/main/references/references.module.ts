@@ -9,26 +9,38 @@ import { CargoTypesController } from "./controllers/cargo-type.controller";
 import { CargoTypeGroupsController } from "./controllers/cargo-type-groups.controller";
 import { CargoTypesService } from "./services/cargo-type.service";
 import { CargoTypeGroupsService } from "./services/cargo-type-group.service";
+import { Currency } from "./entities/currency.entity";
+import { CurrenciesController } from "./controllers/currencies.controller";
+import { CurrenciesService } from "./services/currency.service";
+import { Subscription } from "./entities/subscription.entity";
+import { SubscriptionsController } from "./controllers/subscriptions.controller";
+import { SubscriptionsService } from "./services/subscription.service";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TransportType, CargoType, CargoTypeGroup]),
+    TypeOrmModule.forFeature([TransportType, CargoType, CargoTypeGroup, Currency, Subscription]),
   ],
   controllers: [
     TransportTypesController,
     CargoTypesController,
-    CargoTypeGroupsController
+    CargoTypeGroupsController,
+    CurrenciesController,
+    SubscriptionsController
   ],
   providers: [
     TransportTypesService,
     CargoTypesService,
-    CargoTypeGroupsService
+    CargoTypeGroupsService,
+    CurrenciesService,
+    SubscriptionsService
   ],
   exports: [
-    TypeOrmModule.forFeature([TransportType, CargoType, CargoTypeGroup]),
+    TypeOrmModule.forFeature([TransportType, CargoType, CargoTypeGroup, Currency, Subscription]),
     TransportTypesService,
     CargoTypesService,
-    CargoTypeGroupsService
+    CargoTypeGroupsService,
+    CurrenciesService,
+    SubscriptionsService
   ]
 })
 export class ReferencesModule {

@@ -4,6 +4,7 @@ import { StaffsModule } from "./staffs/staffs.module";
 import { AuthModule } from "src/shared/auth/auth.module";
 import { ReferencesModule } from "./references/references.module";
 import { UsersModule } from "./users/users.module";
+import { ClientsModule } from "./clients/clients.module";
 
 @Module({
   imports: [
@@ -11,7 +12,8 @@ import { UsersModule } from "./users/users.module";
     RolesModule,
     AuthModule,
     ReferencesModule,
-    UsersModule
+    UsersModule,
+    ClientsModule
   ],
   controllers: [
   ],
@@ -22,7 +24,8 @@ import { UsersModule } from "./users/users.module";
     RolesModule,
     AuthModule,
     ReferencesModule,
-    UsersModule
+    UsersModule,
+    ClientsModule
   ]
 })
 export class MainModule {
