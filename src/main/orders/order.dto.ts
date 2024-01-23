@@ -1,4 +1,4 @@
-import { IsBoolean, IsDate, IsEmail, IsNotEmpty, IsNumber, IsString, IsUUID, Matches, MaxLength, MinLength, UUIDVersion } from "class-validator";
+import { IsBoolean, IsDate, IsNotEmpty, IsNumber, IsString, IsUUID } from "class-validator";
 
 export class OrderDto {
 
@@ -26,7 +26,7 @@ export class OrderDto {
 
   @IsBoolean()
   @IsNotEmpty()
-  idDangerousCargo
+  isDangerousCargo
 
   @IsUUID()
   @IsNotEmpty()

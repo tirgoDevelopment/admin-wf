@@ -1,5 +1,4 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
-import { Role } from './role.entity';
 
 @Entity()
 export class Permission {
@@ -47,10 +46,6 @@ export class Permission {
 
   @Column({ nullable: false, default: false, name: 'merchant_list' })
   merchantList: boolean;
-
-  @OneToOne(() => Role, (role) => role.permission)
-  @JoinColumn({ name: 'role_id' })
-  role: Role;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
   createdAt: Date;
