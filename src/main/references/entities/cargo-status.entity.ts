@@ -23,6 +23,6 @@ export class CargoStatus {
   @Column({ default: false })
   deleted: boolean;
 
-  @OneToMany(() => Order, order => order.currency)
+  @OneToMany(() => Order, order => order.cargoStatus)
   orders: Order[];
 }

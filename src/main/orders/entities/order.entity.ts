@@ -1,4 +1,5 @@
 import { Client } from 'src/main/clients/client.entity';
+import { CargoStatus } from 'src/main/references/entities/cargo-status.entity';
 import { CargoType } from 'src/main/references/entities/cargo-type.entity';
 import { Currency } from 'src/main/references/entities/currency.entity';
 import { TransportType } from 'src/main/references/entities/transport-type.entity';
@@ -12,7 +13,8 @@ export class Order {
   @ManyToOne(() => Client, client => client.orders)
   client: Client;
 
-  // driverId
+  // @ManyToOne(() => Driver, driver => driver.orders)
+  // driver: Driver;
 
   @Column({ nullable: true })
   sendDate: Date;
@@ -50,8 +52,8 @@ export class Order {
   @ManyToOne(() => TransportType, cargoType => cargoType.orders)
   transportType: TransportType;
 
-  @Column({ nullable: true })
-  cargoStatus: number;
+  @ManyToOne(() => CargoStatus, cargoStatus => cargoStatus.orders)
+  cargoStatus: CargoStatus;
 
   @Column({ nullable: true })
   isSafeTransaction: boolean;
