@@ -23,7 +23,7 @@ const entities = [
   Currency,
   Subscription,
   Order,
-  CargoStatus
+  CargoStatus,
 ];
 
 export {
@@ -38,7 +38,7 @@ export {
   Currency,
   Subscription,
   Order,
-  CargoStatus
+  CargoStatus,
 };
 export default entities;
 
