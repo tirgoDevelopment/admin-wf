@@ -1,9 +1,9 @@
-import { Order } from 'src/main/orders/entities/order.entity';
-import { Staff } from 'src/main/staffs/staff.entity';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Staff } from '../../staffs/staff.entity';
+import { Order } from '../../orders/entities/order.entity';
 
 @Entity()
-export class TransportType {
+export class TransportKind {
   @PrimaryGeneratedColumn("uuid")
   id?: string;
 
@@ -11,7 +11,16 @@ export class TransportType {
   name: string;
 
   @Column({ nullable: true })
-  description: string;
+  count: number;
+
+  @Column({ nullable: true })
+  isMode: boolean;
+
+  @Column({ nullable: true })
+  from: string;
+
+  @Column({ nullable: true })
+  to: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
   createdAt: Date;

@@ -1,13 +1,11 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SundryService } from 'src/shared/services/sundry.service';
 import { EntityNotFoundError, Repository } from 'typeorm';
 import { InternalErrorException } from 'src/shared/exceptions/internal.exception';
 import { NoContentException } from 'src/shared/exceptions/no-content.exception';
 import { BadRequestException } from 'src/shared/exceptions/bad-request.exception';
-import { Subscription } from '../entities/subscription.entity';
 import { SubscriptionDto } from '../dtos/subscription.dto';
-import { BpmResponse, ResponseStauses } from 'src/main/index';
+import { BpmResponse, ResponseStauses, Subscription } from 'src/main/index';
 
 @Injectable()
 export class SubscriptionsService {

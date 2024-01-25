@@ -1,21 +1,23 @@
-import { Order } from 'src/main/orders/entities/order.entity';
-import { Staff } from 'src/main/staffs/staff.entity';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { CargoTypeGroup } from './cargo-type-group.entity';
+import { Staff } from '../../staffs/staff.entity';
+import { Order } from '../../orders/entities/order.entity';
 
 @Entity()
-export class CargoType {
+export class TransportType {
   @PrimaryGeneratedColumn("uuid")
   id?: string;
 
   @Column({ nullable: false, unique: true })
   name: string;
 
-  @ManyToOne(() => CargoTypeGroup, cargoTypeGroup => cargoTypeGroup.cargoTypes)
-  group: CargoTypeGroup;
+  @Column({ nullable: true })
+  description: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
   createdAt: Date;
+
+  @ManyToOne(() => Staff, user => user.transportTypes)
+  createdBy: Staff;
 
   @Column({ default: true })
   active: boolean;
@@ -23,6 +25,6 @@ export class CargoType {
   @Column({ default: false })
   deleted: boolean;
 
-  @OneToMany(() => Order, order => order.cargoType)
+  @OneToMany(() => Order, order => order.transportType)
   orders: Order[];
 }

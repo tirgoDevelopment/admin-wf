@@ -35,8 +35,8 @@ export class Staff {
   @Column({ default: false })
   deleted: boolean;
 
-   // OneToOne relationship with User
-   @OneToOne(() => User, (user) => user.staff)
-   @JoinColumn({ name: 'user_id' }) // This should be the primary key column of User
-   user: User;
+  // OneToOne relationship with User
+  @OneToOne(() => User, (user) => user.staff)
+  @JoinColumn({ name: 'user_id' }) // This should be the primary key column of User
+  user: User;
 }

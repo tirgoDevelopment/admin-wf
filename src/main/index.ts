@@ -1,15 +1,4 @@
-import { Client } from "./clients/client.entity";
-import { Order } from "./orders/entities/order.entity";
-import { CargoStatus } from "./references/entities/cargo-status.entity";
-import { CargoTypeGroup } from "./references/entities/cargo-type-group.entity";
-import { CargoType } from "./references/entities/cargo-type.entity";
-import { Currency } from "./references/entities/currency.entity";
-import { Subscription, } from "./references/entities/subscription.entity";
-import { TransportType } from "./references/entities/transport-type.entity";
-import { Permission } from "./role/entities/permission.entity";
-import { Role } from "./role/entities/role.entity";
-import { Staff } from "./staffs/staff.entity";
-import { User } from "./users/user.entity";
+import { Client, Driver, Role, Staff, Permission, TransportType, User, CargoType, CargoTypeGroup, CargoStatus, Currency, Subscription, Order, DriverTransport, TransportVerification, Transaction, CargoLoadMethod, CargoPackage, TransportKind } from "src/shared/entites";
 
 const entities = [
   Staff,
@@ -20,10 +9,17 @@ const entities = [
   CargoType,
   CargoTypeGroup,
   Client,
+  Driver,
+  DriverTransport,
+  TransportVerification,
+  Transaction,
   Currency,
   Subscription,
   Order,
   CargoStatus,
+  CargoLoadMethod,
+  CargoPackage,
+  TransportKind
 ];
 
 export {
@@ -35,10 +31,17 @@ export {
   CargoType,
   CargoTypeGroup,
   Client,
+  Driver,
+  DriverTransport,
+  TransportVerification,
+  Transaction,
   Currency,
   Subscription,
   Order,
   CargoStatus,
+  CargoLoadMethod,
+  CargoPackage,
+  TransportKind
 };
 export default entities;
 
@@ -59,19 +62,26 @@ export enum ResponseStauses {
   StaffNotFound = 'staffNotFound',
   RoleNotFound = 'role  NotFound',
   IdIsRequired = 'idIsRequired',
+  CurrencyNotFound = 'currencyNotfound',
+  CargoTypeNotFound = 'cargoTypeNotfound',
   TransportTypeNotfound = 'transportTypeNotFound',
+  TransportKindNotfound = 'transportKindNotFound',
+  CargoLoadingMethodNotFound = 'cargoLoadingMethodNotFound',
+  CargoPackageNotFound = 'cargoPackageNotFound',
   DriverNotFound = 'driverNotFound',
   UserTypeRequired = 'userTypeRequired',
   InvalidUserType = 'invalidUserType  ',
   SuccessfullyCreated = 'successfullyCreated',
   SuccessfullyUpdated = 'successfullyUpdated',
   SuccessfullyDeleted = 'successfullyDeleted',
+  SuccessfullyCanceled = 'successfullyCanceled',
   SuccessfullyRejected = 'successfullyRejected',
   SuccessfullyVerified = 'successfullyVerified',
   CreateDataFailed = 'createFailed',
   SendCodeFailed = 'sendCodeFailed',
   UpdateDataFailed = 'updateFalied',
   DeleteDataFailed = 'deleteFalied',
+  CancelDataFailed = 'cancelFalied',
   RejectDataFailed = 'rejectFalied',
   VerifyDataFailed = 'verifyFalied',
   BlockDataFailed = 'blockFalied',
@@ -84,3 +94,9 @@ export enum ResponseStauses {
   NotModified = 'notModified',
   InvalidPassword = 'invalidPassword'
 } 
+
+export enum CargoStatusCodes {
+  Created = 0,
+  Accepted = 1,
+  Canceled = 3
+}

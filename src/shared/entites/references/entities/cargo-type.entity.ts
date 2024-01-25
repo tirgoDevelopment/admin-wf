@@ -1,18 +1,17 @@
-import { Order } from 'src/main/orders/entities/order.entity';
-import { Staff } from 'src/main/staffs/staff.entity';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { CargoTypeGroup } from './cargo-type-group.entity';
+import { Order } from '../../orders/entities/order.entity';
 
 @Entity()
-export class Currency {
+export class CargoType {
   @PrimaryGeneratedColumn("uuid")
   id?: string;
 
   @Column({ nullable: false, unique: true })
   name: string;
 
-  @Column({ nullable: true })
-  code: number;
+  @ManyToOne(() => CargoTypeGroup, cargoTypeGroup => cargoTypeGroup.cargoTypes)
+  group: CargoTypeGroup;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
   createdAt: Date;
@@ -23,6 +22,6 @@ export class Currency {
   @Column({ default: false })
   deleted: boolean;
 
-  @OneToMany(() => Order, order => order.currency)
+  @OneToMany(() => Order, order => order.cargoType)
   orders: Order[];
 }

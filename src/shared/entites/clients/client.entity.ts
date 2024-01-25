@@ -1,5 +1,6 @@
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Order } from '../orders/entities/order.entity';
+import { User } from '../users/user.entity';
 
 @Entity()
 export class Client {
@@ -34,7 +35,7 @@ export class Client {
   loginVerificationCodeExpireTime: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
-  createdAt: Date;  
+  createdAt: Date;
 
   @Column({ default: true })
   active: boolean;
@@ -45,5 +46,8 @@ export class Client {
   @OneToMany(() => Order, order => order.client)
   orders: Order[];
 
+  @OneToOne(() => User, (user) => user.client)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
 }

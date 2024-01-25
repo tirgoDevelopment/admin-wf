@@ -1,7 +1,5 @@
-import { Order } from 'src/main/orders/entities/order.entity';
-import { Staff } from 'src/main/staffs/staff.entity';
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { CargoTypeGroup } from './cargo-type-group.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Order } from '../../orders/entities/order.entity';
 
 @Entity()
 export class CargoStatus {

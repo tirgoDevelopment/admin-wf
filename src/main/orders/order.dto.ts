@@ -4,76 +4,60 @@ export class OrderDto {
 
   id?: string;
   
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  clientId
-
-  @IsNumber()
-  @IsNotEmpty()
-  driverId
-
-  @IsDate()
-  @IsNotEmpty()
-  sendDate
-
-  @IsDate()
-  @IsNotEmpty()
-  sendTime
-
-  @IsBoolean()
-  @IsNotEmpty()
-  isUrgent
-
-  @IsBoolean()
-  @IsNotEmpty()
-  isDangerousCargo
-
-  @IsUUID()
-  @IsNotEmpty()
-  currencyId
-
-  @IsNumber()
-  @IsNotEmpty()
-  offeredPrice
-
-  @IsUUID()
-  @IsNotEmpty()
-  cargoTypeId
-
-  @IsNumber()
-  @IsNotEmpty()
-  cargoWeight
-
-  @IsNumber()
-  @IsNotEmpty()
-  cargoLength
-
-  @IsNumber()
-  @IsNotEmpty()
-  cargiWidth
-
-  @IsNumber()
-  @IsNotEmpty()
-  cargoHeight
-
-  @IsUUID()
-  @IsNotEmpty()
-  transportTypeId
-
-  @IsUUID()
-  @IsNotEmpty()
-  cargoStatusId
-
-  @IsBoolean()
-  @IsNotEmpty()
-  isSafeTransaction
+  loadingLocation: string;
 
   @IsString()
   @IsNotEmpty()
-  sendLocation
+  deliveryLocation: string;
 
-  @IsString()
   @IsNotEmpty()
-  deliveryLocation
+  @IsNumber()
+  clientId: number;
 
+  cargoStatusId?: number;
+
+  customsPlaceLocation?: string;
+  customsClearancePlaceLocation?: string;
+  additionalLoadingLication?: string;
+  additionalLoadingLocation?: string;
+  isAdr?: boolean;
+  isCarnetTir?: string;
+  isGlonas?: boolean;
+  isParanom?: boolean;
+  offeredPrice?: number;
+  paymentMethod?: string;
+  inAdvancePrice?: number;
+  offeredPriceCurrencyId: string;
+  inAdvancePriceCurrencyId: string;
+
+  @IsDate()
+  @IsNotEmpty()
+  sendDate: Date;
+
+  @IsBoolean()
+  @IsNotEmpty()
+  isSafeTransaction: boolean;
+
+  @IsUUID()
+  @IsNotEmpty()
+  transportTypeId: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  transportKindId: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  cargoTypeId: string;
+
+  cargoWeight?: number;
+  cargoLength?: number;
+  cargiWidth?: number;
+  cargoHeight?: number;
+  volume?: number;
+
+  loadingMethodId?: string;
+  cargoPackageId?: string;
 }
