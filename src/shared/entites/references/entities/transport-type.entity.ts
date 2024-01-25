@@ -10,15 +10,6 @@ export class TransportType {
   @Column({ nullable: false, unique: true })
   name: string;
 
-  @Column({ nullable: false, name: 'load_side' })
-  loadSide: string;
-
-  @Column({ nullable: false })
-  capacity: string;
-
-  @Column({ nullable: false })
-  volume: string;
-
   @Column({ nullable: true })
   description: string;
 
