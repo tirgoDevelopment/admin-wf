@@ -19,9 +19,6 @@ export class TransportTypesService {
         try {
             const transportType: TransportType = new TransportType();
             transportType.name = createTransportTypeDto.name;
-            transportType.volume = createTransportTypeDto.volume;
-            transportType.capacity = createTransportTypeDto.capacity;
-            transportType.loadSide = createTransportTypeDto.loadSide;
             transportType.description = createTransportTypeDto.description;
 
             const saveResult = await this.transportTypesRepository.save(transportType);
@@ -37,9 +34,6 @@ export class TransportTypesService {
             const transportType: TransportType = await this.transportTypesRepository.findOneOrFail({ where: { id: updateTransportTypeDto.id } })
             transportType.name = updateTransportTypeDto.name;
             transportType.description = updateTransportTypeDto.description;
-            transportType.volume = updateTransportTypeDto.volume;
-            transportType.capacity = updateTransportTypeDto.capacity;
-            transportType.loadSide = updateTransportTypeDto.loadSide;
 
             await this.transportTypesRepository.update({ id: transportType.id }, transportType);
 
