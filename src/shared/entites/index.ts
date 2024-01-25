@@ -15,5 +15,8 @@ export { DriverTransport } from "./driver/entities/driver-transport.entity";
 export { TransportVerification } from "./driver/entities/transport-verification.entity";
 export { Config } from "./config/config.entity";
 export { Order } from "./orders/entities/order.entity";
+export { CargoLoadMethod } from "./references/entities/cargo-load-method.entity";
+export { CargoPackage } from "./references/entities/cargo-package.entity";
+export { TransportKind } from "./references/entities/transport-kind.entity";
 
 

@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { BpmResponse, ResponseStauses } from 'src/main/index';
-import { CargoTypeGroup } from '../entities/cargo-type-group.entity';
+import { BpmResponse, CargoTypeGroup, ResponseStauses } from 'src/main/index';
 import { CargoTypeGroupDto } from '../dtos/cargo-type-group.dto';
 import { InternalErrorException } from 'src/shared/exceptions/internal.exception';
 import { BadRequestException } from 'src/shared/exceptions/bad-request.exception';

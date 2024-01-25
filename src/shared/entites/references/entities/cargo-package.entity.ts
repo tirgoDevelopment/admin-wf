@@ -2,15 +2,12 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Order } from '../../orders/entities/order.entity';
 
 @Entity()
-export class CargoStatus {
+export class CargoPackage {
   @PrimaryGeneratedColumn("uuid")
   id?: string;
 
   @Column({ nullable: false, unique: true })
   name: string;
-
-  @Column({ nullable: true })
-  code: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
   createdAt: Date;
@@ -21,6 +18,6 @@ export class CargoStatus {
   @Column({ default: false })
   deleted: boolean;
 
-  @OneToMany(() => Order, order => order.cargoStatus)
+  @OneToMany(() => Order, order => order.cargoPackage)
   orders: Order[];
 }

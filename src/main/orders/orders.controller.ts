@@ -7,6 +7,8 @@ import {
   ValidationPipe,
   Put,
   Query,
+  Patch,
+  Delete,
 } from '@nestjs/common';
 import { OrderDto } from './order.dto';
 import { OrdersService } from './orders.service';
@@ -28,7 +30,7 @@ export class OrdersController {
   }
 
   @Get()
-  async getOrder(@Query('id') id: string) {
+  async getOrder(@Query('id') id: number) {
     return this.ordersService.getOrderById(id);
   }
 
@@ -37,8 +39,14 @@ export class OrdersController {
     return this.ordersService.getAllOrders();
   }
 
-  @Get('permission')
-  async getAllPermission() {
-    return this.ordersService.getAllPermissions();
+  @Patch('cancel')
+  async cancelOrder(@Query('id') id: number) {
+    return this.ordersService.cancelOrder(id);
   }
+
+  @Delete('delete')
+  async deleteOrder(@Query('id') id: number) {
+    return this.ordersService.deleteOrder(id);
+  }
+
 }

@@ -22,8 +22,11 @@ export class Currency {
   @Column({ default: false })
   deleted: boolean;
 
-  @OneToMany(() => Order, order => order.currency)
-  orders: Order[];
+  @OneToMany(() => Order, order => order.inAdvancePriceCurrency)
+  inAdvanceOrders: Order[];
+
+  @OneToMany(() => Order, order => order.offeredPriceCurrency)
+  offeredOrders: Order[];
   
   @OneToMany(() => Transaction, (transaction) => transaction.currency)
   transactions: Transaction[];

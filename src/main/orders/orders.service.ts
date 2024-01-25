@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { BpmResponse, ResponseStauses } from '..';
+import { BpmResponse, CargoLoadMethod, CargoPackage, CargoStatus, CargoStatusCodes, CargoType, Client, Currency, ResponseStauses, TransportKind, TransportType } from '..';
 import { Order } from '../../shared/entites/orders/entities/order.entity';
 import { OrderDto } from './order.dto';
 import { InternalErrorException } from 'src/shared/exceptions/internal.exception';
@@ -12,70 +12,172 @@ import { NoContentException } from 'src/shared/exceptions/no-content.exception';
 export class OrdersService {
   constructor(
     @InjectRepository(Order) private readonly ordersRepository: Repository<Order>,
-    // @InjectRepository(Permission) private readonly permissionsRepository: Repository<Permission>
+    @InjectRepository(Client) private readonly clientsRepository: Repository<Client>,
+    @InjectRepository(Currency) private readonly curreniesRepository: Repository<Currency>,
+    @InjectRepository(CargoType) private readonly cargoTyepesRepository: Repository<CargoType>,
+    @InjectRepository(CargoStatus) private readonly cargoStatusesRepository: Repository<CargoStatus>,
+    @InjectRepository(CargoPackage) private readonly cargoPackagesRepository: Repository<CargoPackage>,
+    @InjectRepository(TransportKind) private readonly transportKindsRepository: Repository<TransportKind>,
+    @InjectRepository(TransportType) private readonly transportTypesRepository: Repository<TransportType>,
+    @InjectRepository(CargoLoadMethod) private readonly cargoLoadingMethodsRepository: Repository<CargoLoadMethod>
   ) { }
 
   async createOrder(createOrderDto: OrderDto): Promise<BpmResponse> {
-    const queryRunner = this.ordersRepository.manager.connection.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
     try {
+      const client: Client = await this.clientsRepository.findOneOrFail({ where: { id: createOrderDto.clientId } });
+      const offeredCurrency: Currency = await this.curreniesRepository.findOneOrFail({ where: { id: createOrderDto.offeredPriceCurrencyId } });
+      const inAdvanceCurrency: Currency = await this.curreniesRepository.findOneOrFail({ where: { id: createOrderDto.inAdvancePriceCurrencyId } });
+      const transportType: TransportType = await this.transportTypesRepository.findOneOrFail({ where: { id: createOrderDto.transportTypeId } });
+      const transportKind: TransportKind = await this.transportKindsRepository.findOneOrFail({ where: { id: createOrderDto.transportKindId } });
+      const cargoType: CargoType = await this.cargoTyepesRepository.findOneOrFail({ where: { id: createOrderDto.cargoTypeId } });
+      const loadingMethod: CargoLoadMethod = await this.cargoLoadingMethodsRepository.findOneOrFail({ where: { id: createOrderDto.loadingMethodId } });
+      const cargoPackage: CargoPackage = await this.cargoPackagesRepository.findOneOrFail({ where: { id: createOrderDto.cargoPackageId } });
+      const cargoStatus: CargoStatus = await this.cargoStatusesRepository.findOneOrFail({ where: { code: CargoStatusCodes.Created } });
+
       const order: Order = new Order();
+      order.client = client;
+      order.loadingMethod = loadingMethod;
+      order.cargoPackage = cargoPackage;
+      order.inAdvancePriceCurrency = inAdvanceCurrency;
+      order.offeredPriceCurrency = offeredCurrency;
+      order.transportType = transportType;
+      order.transportKind = transportKind;
+      order.cargoType = cargoType;
+      order.cargoStatus = cargoStatus;
+      order.loadingLocation = createOrderDto.loadingLocation;
+      order.deliveryLocation = createOrderDto.deliveryLocation;
+      order.customsPlaceLocation = createOrderDto.customsPlaceLocation;
+      order.customsClearancePlaceLocation = createOrderDto.customsClearancePlaceLocation;
+      order.additionalLoadingLication = createOrderDto.additionalLoadingLication;
+      order.additionalLoadingLocation = createOrderDto.additionalLoadingLocation;
+      order.isAdr = createOrderDto.isAdr;
+      order.isCarnetTir = createOrderDto.isCarnetTir;
+      order.isGlonas = createOrderDto.isGlonas;
+      order.isParanom = createOrderDto.isParanom;
+      order.offeredPrice = createOrderDto.offeredPrice;
+      order.paymentMethod = createOrderDto.paymentMethod;
+      order.inAdvancePrice = createOrderDto.inAdvancePrice;
+      order.sendDate = createOrderDto.sendDate;
+      order.isSafeTransaction = createOrderDto.isSafeTransaction;
+      order.cargoWeight = createOrderDto.cargoWeight;
+      order.cargoLength = createOrderDto.cargoLength;
+      order.cargiWidth = createOrderDto.cargiWidth;
+      order.cargoHeight = createOrderDto.cargoHeight;
+      order.volume = createOrderDto.volume;
 
-      // Save order
-      const savedOrder = await queryRunner.manager.save(Order, order);
-      await queryRunner.commitTransaction();
-
+      await this.ordersRepository.save(order);
       return new BpmResponse(true, null, [ResponseStauses.SuccessfullyCreated]);
     } catch (err: any) {
-      console.log(err)
-      await queryRunner.rollbackTransaction();
-      throw new InternalErrorException(ResponseStauses.CreateDataFailed);
-    } finally {
-      await queryRunner.release();
+      if (err.name == 'EntityNotFoundError') {
+        if (err.message.includes('clientsRepository')) {
+          throw new BadRequestException(ResponseStauses.UserNotFound);
+        } else if (err.message.includes('curreniesRepository')) {
+          throw new BadRequestException(ResponseStauses.CurrencyNotFound);
+        } else if (err.message.includes('transportTypesRepository')) {
+          throw new BadRequestException(ResponseStauses.TransportTypeNotfound);
+        } else if (err.message.includes('transportKindsRepository')) {
+          throw new BadRequestException(ResponseStauses.TransportKindNotfound);
+        } else if (err.message.includes('cargoTyepesRepository')) {
+          throw new BadRequestException(ResponseStauses.CargoTypeNotFound);
+        } else if (err.message.includes('cargoLoadingMethodsRepository')) {
+          throw new BadRequestException(ResponseStauses.CargoLoadingMethodNotFound);
+        } else if (err.message.includes('cargoPackagesRepository')) {
+          throw new BadRequestException(ResponseStauses.CargoPackageNotFound);
+        }
+      } else {
+        throw new InternalErrorException(ResponseStauses.CreateDataFailed);
+      }
     }
   }
 
   async updateOrder(updateOrderDto: OrderDto): Promise<BpmResponse> {
-    const queryRunner = this.ordersRepository.manager.connection.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
     try {
-      // Find the existing order 
-      const existingOrder = await queryRunner.manager.findOne(Order, { where: { id: updateOrderDto.id } });
 
-      if (!existingOrder) {
-        return new BpmResponse(false, null, [ResponseStauses.NotFound]);
+      const order: Order = new Order();
+      order.loadingLocation = updateOrderDto.loadingLocation || order.loadingLocation;
+      order.deliveryLocation = updateOrderDto.deliveryLocation || order.deliveryLocation;
+      order.customsPlaceLocation = updateOrderDto.customsPlaceLocation || order.customsPlaceLocation;
+      order.customsClearancePlaceLocation = updateOrderDto.customsClearancePlaceLocation || order.customsClearancePlaceLocation;
+      order.additionalLoadingLication = updateOrderDto.additionalLoadingLication || order.additionalLoadingLication;
+      order.additionalLoadingLocation = updateOrderDto.additionalLoadingLocation || order.additionalLoadingLocation;
+      order.isAdr = updateOrderDto.isAdr || order.isAdr;
+      order.isCarnetTir = updateOrderDto.isCarnetTir || order.isCarnetTir;
+      order.isGlonas = updateOrderDto.isGlonas || order.isGlonas;
+      order.isParanom = updateOrderDto.isParanom || order.isParanom;
+      order.offeredPrice = updateOrderDto.offeredPrice || order.offeredPrice;
+      order.paymentMethod = updateOrderDto.paymentMethod || order.paymentMethod;
+      order.inAdvancePrice = updateOrderDto.inAdvancePrice || order.inAdvancePrice;
+      order.sendDate = updateOrderDto.sendDate || order.sendDate;
+      order.isSafeTransaction = updateOrderDto.isSafeTransaction || order.isSafeTransaction;
+      order.cargoWeight = updateOrderDto.cargoWeight || order.cargoWeight;
+      order.cargoLength = updateOrderDto.cargoLength || order.cargoLength;
+      order.cargiWidth = updateOrderDto.cargiWidth || order.cargiWidth;
+      order.cargoHeight = updateOrderDto.cargoHeight || order.cargoHeight;
+      order.volume = updateOrderDto.volume || order.volume;
+
+      if (updateOrderDto.clientId) {
+        order.client = await this.clientsRepository.findOneOrFail({ where: { id: updateOrderDto.clientId } });
+      }
+      if (updateOrderDto.offeredPriceCurrencyId) {
+        order.offeredPriceCurrency = await this.curreniesRepository.findOneOrFail({ where: { id: updateOrderDto.offeredPriceCurrencyId } });
+
+      }
+      if (updateOrderDto.inAdvancePriceCurrencyId) {
+        order.inAdvancePriceCurrency = await this.curreniesRepository.findOneOrFail({ where: { id: updateOrderDto.inAdvancePriceCurrencyId } });
+
+      }
+      if (updateOrderDto.transportTypeId) {
+        order.transportType = await this.transportTypesRepository.findOneOrFail({ where: { id: updateOrderDto.transportTypeId } });
+
+      }
+      if (updateOrderDto.transportKindId) {
+        order.transportKind = await this.transportKindsRepository.findOneOrFail({ where: { id: updateOrderDto.transportKindId } });
+
+      }
+      if (updateOrderDto.cargoTypeId) {
+        order.cargoType = await this.cargoTyepesRepository.findOneOrFail({ where: { id: updateOrderDto.cargoTypeId } });
+
+      }
+      if (updateOrderDto.loadingMethodId) {
+        order.loadingMethod = await this.cargoLoadingMethodsRepository.findOneOrFail({ where: { id: updateOrderDto.loadingMethodId } });
+
+      }
+      if (updateOrderDto.cargoPackageId) {
+        order.cargoPackage = await this.cargoPackagesRepository.findOneOrFail({ where: { id: updateOrderDto.cargoPackageId } });
+
       }
 
-      // Update order properties
-
-      // Save updated order
-      const updatedOrder = await queryRunner.manager.save(Order, existingOrder);
-
-      // Find the associated permission
-
-      await queryRunner.commitTransaction();
-
-      return new BpmResponse(true, null, [ResponseStauses.SuccessfullyUpdated]);
+      await this.ordersRepository.save(order);
+      return new BpmResponse(true, null, [ResponseStauses.SuccessfullyCreated]);
     } catch (err: any) {
-      await queryRunner.rollbackTransaction();
-      return new BpmResponse(false, null, [ResponseStauses.UpdateDataFailed]);
-    } finally {
-      await queryRunner.release();
+      if (err.name == 'EntityNotFoundError') {
+        if (err.message.includes('clientsRepository')) {
+          throw new BadRequestException(ResponseStauses.UserNotFound);
+        } else if (err.message.includes('curreniesRepository')) {
+          throw new BadRequestException(ResponseStauses.CurrencyNotFound);
+        } else if (err.message.includes('transportTypesRepository')) {
+          throw new BadRequestException(ResponseStauses.TransportTypeNotfound);
+        } else if (err.message.includes('transportKindsRepository')) {
+          throw new BadRequestException(ResponseStauses.TransportKindNotfound);
+        } else if (err.message.includes('cargoTyepesRepository')) {
+          throw new BadRequestException(ResponseStauses.CargoTypeNotFound);
+        } else if (err.message.includes('cargoLoadingMethodsRepository')) {
+          throw new BadRequestException(ResponseStauses.CargoLoadingMethodNotFound);
+        } else if (err.message.includes('cargoPackagesRepository')) {
+          throw new BadRequestException(ResponseStauses.CargoPackageNotFound);
+        }
+      } else {
+        throw new InternalErrorException(ResponseStauses.UpdateDataFailed);
+      }
     }
   }
 
-  async getOrderById(id: string): Promise<BpmResponse> {
+  async getOrderById(id: number): Promise<BpmResponse> {
     try {
       if (!id) {
         throw new BadRequestException(ResponseStauses.IdIsRequired);
       }
-      const order = await this.ordersRepository.findOneOrFail({ where: { id, deleted: false } });
+      const order = await this.ordersRepository.findOneOrFail({ where: { id, deleted: false }, relations: ['Client', 'Currency', 'CargoType', 'CargoPackage', 'TransportType', 'CargoLoadMethod', 'TransportKind'] });
       return new BpmResponse(true, order, null);
     } catch (err: any) {
       if (err.name == 'EntityNotFoundError') {
@@ -90,7 +192,7 @@ export class OrdersService {
 
   async getAllOrders(): Promise<BpmResponse> {
     try {
-      const orders = await this.ordersRepository.find({ where: { deleted: false }, relations: ['permission'] });
+      const orders = await this.ordersRepository.find({ where: { deleted: false }, relations: ['Client', 'Currency', 'CargoType', 'CargoPackage', 'TransportType', 'CargoLoadMethod', 'TransportKind'] });
       if (!orders.length) {
         throw new NoContentException();
       }
@@ -108,20 +210,37 @@ export class OrdersService {
     }
   }
 
-
-  async getAllPermissions(): Promise<BpmResponse> {
+  async deleteOrder(id: number): Promise<BpmResponse> {
+    if(!id || isNaN(id)) {
+      throw new BadRequestException(ResponseStauses.IdIsRequired);
+    }
     try {
-      return new BpmResponse(true, null, [])
-    } catch (err: any) {
-      if (err.name == 'EntityNotFoundError') {
-        // Client not found
-        throw new NoContentException();
-      } else if (err instanceof HttpException) {
-        throw err
+      const res = await this.ordersRepository.update({ id }, { deleted: true })
+      if(res.affected) {
+        return new BpmResponse(true, null, [ResponseStauses.SuccessfullyDeleted]);
       } else {
-        // Other error (handle accordingly)
-        throw new InternalErrorException(ResponseStauses.InternalServerError, err.message)
+        throw new InternalErrorException(ResponseStauses.DeleteDataFailed);
       }
+    } catch (err: any) {
+
     }
   }
+
+  async cancelOrder(id: number): Promise<BpmResponse> {
+    if(!id || isNaN(id)) {
+      throw new BadRequestException(ResponseStauses.IdIsRequired);
+    }
+    try {
+      const status = await this.cargoStatusesRepository.findOneOrFail({ where: { code: CargoStatusCodes.Canceled } });
+      const res = await this.ordersRepository.update({ id }, { canceled: true, cargoStatus: status });
+      if(res.affected) {
+        return new BpmResponse(true, null, [ResponseStauses.SuccessfullyCanceled]);
+      } else {
+        throw new InternalErrorException(ResponseStauses.CancelDataFailed);
+      }
+    } catch (err: any) {
+
+    }
+  }
+
 }

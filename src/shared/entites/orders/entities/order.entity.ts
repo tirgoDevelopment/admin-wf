@@ -1,15 +1,18 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Client } from '../../clients/client.entity';
 import { Currency } from '../../references/entities/currency.entity';
 import { CargoType } from '../../references/entities/cargo-type.entity';
 import { TransportType } from '../../references/entities/transport-type.entity';
-import { CargoStatus } from '../../references/entities/cargo-status.entity';
 import { Driver } from '../../driver/entities/driver.entity';
+import { CargoPackage } from '../../references/entities/cargo-package.entity';
+import { CargoLoadMethod } from '../../references/entities/cargo-load-method.entity';
+import { TransportKind } from '../../references/entities/transport-kind.entity';
+import { CargoStatus } from '../../references/entities/cargo-status.entity';
 
 @Entity()
 export class Order {
-  @PrimaryGeneratedColumn("uuid")
-  id?: string;
+  @PrimaryGeneratedColumn('increment')
+  id?: number;
 
   @ManyToOne(() => Client, client => client.orders)
   client: Client;
@@ -19,21 +22,6 @@ export class Order {
 
   @Column({ nullable: true })
   sendDate: Date;
-
-  @Column({ nullable: true })
-  sendTime: string;
-
-  @Column({ nullable: true })
-  isUrgent: boolean;
-
-  @Column({ nullable: true })
-  isDangerousCargo: boolean;
-
-  @ManyToOne(() => Currency, currency => currency.orders)
-  currency: Currency;
-
-  @Column({ nullable: true })
-  offeredPrice: number;
 
   @ManyToOne(() => CargoType, cargoType => cargoType.orders)
   cargoType: CargoType;
@@ -53,17 +41,68 @@ export class Order {
   @ManyToOne(() => TransportType, cargoType => cargoType.orders)
   transportType: TransportType;
 
-  @ManyToOne(() => CargoStatus, cargoStatus => cargoStatus.orders)
-  cargoStatus: CargoStatus;
+  @ManyToOne(() => TransportKind, transportKind => transportKind.orders)
+  transportKind: TransportKind;
 
   @Column({ nullable: true })
   isSafeTransaction: boolean;
 
   @Column({ nullable: true })
-  sendLocation: string;
+  loadingLocation: string;
 
   @Column({ nullable: true })
   deliveryLocation: string;
+
+  @Column({ nullable: true })
+  volume: number
+
+  @ManyToOne(() => CargoLoadMethod, cargoLoadMethod => cargoLoadMethod.orders)
+  loadingMethod?: CargoLoadMethod
+
+  @ManyToOne(() => CargoPackage, cargoPackage => cargoPackage.orders)
+  cargoPackage?: CargoPackage;
+
+  @ManyToOne(() => CargoStatus, cargoStatus => cargoStatus.orders)
+  cargoStatus?: CargoStatus;
+
+  @Column({ nullable: true })
+  customsPlaceLocation?: string;
+
+  @Column({ nullable: true })
+  customsClearancePlaceLocation?: string;
+
+  @Column({ nullable: true })
+  additionalLoadingLication?: string;
+
+  @Column({ nullable: true })
+  additionalLoadingLocation?: string;
+
+  @Column({ nullable: true })
+  isAdr?: boolean;
+
+  @Column({ nullable: true })
+  isCarnetTir?: string;
+
+  @Column({ nullable: true })
+  isGlonas?: boolean;
+
+  @Column({ nullable: true })
+  isParanom?: boolean;
+
+  @Column({ nullable: true })
+  offeredPrice?: number;
+
+  @Column({ nullable: true })
+  paymentMethod?: string;
+
+  @Column({ nullable: true })
+  inAdvancePrice?: number;
+
+  @ManyToOne(() => Currency, currency => currency.offeredOrders)
+  offeredPriceCurrency: Currency;
+
+  @ManyToOne(() => Currency, currency => currency.inAdvanceOrders)
+  inAdvancePriceCurrency: Currency;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
   createdAt: Date;
@@ -73,4 +112,7 @@ export class Order {
 
   @Column({ default: false })
   deleted: boolean;
+
+  @Column({ default: false })
+  canceled: boolean;
 }
