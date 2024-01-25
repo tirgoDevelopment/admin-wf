@@ -6,15 +6,6 @@ export class TransportTypeDto {
   @IsNotEmpty()
   name: string;
 
-  @IsNotEmpty()
-  loadSide: string;
-
-  @IsNotEmpty()
-  volume: string;
-
-  @IsNotEmpty()
-  capacity: string;
-
   description?: string;
 
   id?: string;
