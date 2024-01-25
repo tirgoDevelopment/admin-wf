@@ -1,9 +1,10 @@
-import { Client } from 'src/main/clients/client.entity';
-import { CargoStatus } from 'src/main/references/entities/cargo-status.entity';
-import { CargoType } from 'src/main/references/entities/cargo-type.entity';
-import { Currency } from 'src/main/references/entities/currency.entity';
-import { TransportType } from 'src/main/references/entities/transport-type.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Timestamp } from 'typeorm';
+import { Client } from '../../clients/client.entity';
+import { Currency } from '../../references/entities/currency.entity';
+import { CargoType } from '../../references/entities/cargo-type.entity';
+import { TransportType } from '../../references/entities/transport-type.entity';
+import { CargoStatus } from '../../references/entities/cargo-status.entity';
+import { Driver } from '../../driver/entities/driver.entity';
 
 @Entity()
 export class Order {
@@ -13,8 +14,8 @@ export class Order {
   @ManyToOne(() => Client, client => client.orders)
   client: Client;
 
-  // @ManyToOne(() => Driver, driver => driver.orders)
-  // driver: Driver;
+  @ManyToOne(() => Driver, driver => driver.orders)
+  driver: Driver;
 
   @Column({ nullable: true })
   sendDate: Date;

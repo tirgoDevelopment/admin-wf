@@ -2,7 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BpmResponse, ResponseStauses } from '..';
-import { Order } from './entities/order.entity';
+import { Order } from '../../shared/entites/orders/entities/order.entity';
 import { OrderDto } from './order.dto';
 import { InternalErrorException } from 'src/shared/exceptions/internal.exception';
 import { BadRequestException } from 'src/shared/exceptions/bad-request.exception';

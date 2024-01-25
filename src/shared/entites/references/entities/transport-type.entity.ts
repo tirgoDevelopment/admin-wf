@@ -1,6 +1,6 @@
-import { Order } from 'src/main/orders/entities/order.entity';
-import { Staff } from 'src/main/staffs/staff.entity';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Staff } from '../../staffs/staff.entity';
+import { Order } from '../../orders/entities/order.entity';
 
 @Entity()
 export class TransportType {

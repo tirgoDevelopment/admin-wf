@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SharedModule } from "src/shared/modules/shared.module";
-import { Order } from "./entities/order.entity";
+import { Order } from "../../shared/entites/orders/entities/order.entity";
 import { OrdersController } from "./orders.controller";
 import { OrdersService } from "./orders.service";
 
