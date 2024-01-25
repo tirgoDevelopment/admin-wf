@@ -33,7 +33,7 @@ export class OrdersController {
   async getOrder(@Query('id') id: number) {
     return this.ordersService.getOrderById(id);
   }
-
+ 
   @Get('all')
   async getAllOrders() {
     return this.ordersService.getAllOrders();
