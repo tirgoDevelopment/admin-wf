@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Staff } from '../../staffs/staff.entity';
 import { Order } from '../../orders/entities/order.entity';
+import { OrderTransportKind } from './order-transport-kind.entity';
 
 @Entity()
 export class TransportKind {
@@ -11,16 +12,7 @@ export class TransportKind {
   name: string;
 
   @Column({ nullable: true })
-  count: number;
-
-  @Column({ nullable: true })
   isMode: boolean;
-
-  @Column({ nullable: true })
-  from: string;
-
-  @Column({ nullable: true })
-  to: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
   createdAt: Date;
@@ -34,6 +26,11 @@ export class TransportKind {
   @Column({ default: false })
   deleted: boolean;
 
-  @OneToMany(() => Order, order => order.transportType)
-  orders: Order[];
+  @ManyToMany(() => Order, order => order.transportKinds)
+  @JoinTable()
+    orders: Order[];
+
+  @OneToMany(() => OrderTransportKind, orderTransportKind => orderTransportKind.transportKind)
+  orderTransportKinds: OrderTransportKind[];
+
 }

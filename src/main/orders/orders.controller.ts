@@ -35,8 +35,18 @@ export class OrdersController {
   }
  
   @Get('all')
-  async getAllOrders() {
-    return this.ordersService.getAllOrders();
+  async getAllOrders(
+    @Query('clientId') clientId: number,
+    @Query('orderId') orderId: number,
+    @Query('statusId') statusId: string,
+    @Query('loadingLocation') loadingLocation: string,
+    @Query('deliveryLocation') deliveryLocation: string,
+    @Query('transportKindId') transportKindId: string,
+    @Query('transportTypeId') transportTypeId: string,
+    @Query('createdAt') createdAt: string,
+    @Query('sendDate') sendDate: string
+  ) {
+    return this.ordersService.getAllOrders(orderId, clientId, statusId, loadingLocation, deliveryLocation, transportKindId, transportTypeId, createdAt, sendDate);
   }
 
   @Patch('cancel')

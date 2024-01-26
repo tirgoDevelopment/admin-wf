@@ -46,6 +46,9 @@ export class Client {
   @OneToMany(() => Order, order => order.client)
   orders: Order[];
 
+  @OneToMany(() => Order, order => order.client)
+  additionalOrders: Order[];
+
   @OneToOne(() => User, (user) => user.client)
   @JoinColumn({ name: 'user_id' })
   user: User;

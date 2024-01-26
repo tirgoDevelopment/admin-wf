@@ -20,6 +20,7 @@ export class CargoTypesService {
             const group = await this.cargoTypeGroupsRepository.findOneOrFail({ where: { id: createCargoTypeDto.cargoTypeGroupId } });
             const cargoType: CargoType = new CargoType();
             cargoType.name = createCargoTypeDto.name;
+            cargoType.codeTNVED = createCargoTypeDto.codeTNVED;
             cargoType.group = group;
             
             const saveResult = await this.cargoTypesRepository.save(cargoType);
@@ -42,6 +43,7 @@ export class CargoTypesService {
             const group = await this.cargoTypeGroupsRepository.findOneOrFail({ where: { id: updateCargoTypeDto.cargoTypeGroupId } });
             const cargoType: CargoType = await this.cargoTypesRepository.findOneOrFail({ where: { id: updateCargoTypeDto.id } })
             cargoType.name = updateCargoTypeDto.name;
+            cargoType.codeTNVED = updateCargoTypeDto.codeTNVED;
             cargoType.group = group;
 
             await this.cargoTypesRepository.update({ id: cargoType.id }, cargoType);

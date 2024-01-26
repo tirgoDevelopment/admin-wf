@@ -10,6 +10,9 @@ export class CargoType {
   @Column({ nullable: false, unique: true })
   name: string;
 
+  @Column({ nullable: true })
+  codeTNVED: string;
+
   @ManyToOne(() => CargoTypeGroup, cargoTypeGroup => cargoTypeGroup.cargoTypes)
   group: CargoTypeGroup;
 

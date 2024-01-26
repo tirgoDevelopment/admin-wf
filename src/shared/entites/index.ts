@@ -18,5 +18,6 @@ export { Order } from "./orders/entities/order.entity";
 export { CargoLoadMethod } from "./references/entities/cargo-load-method.entity";
 export { CargoPackage } from "./references/entities/cargo-package.entity";
 export { TransportKind } from "./references/entities/transport-kind.entity";
+export { OrderTransportKind } from "./references/entities/order-transport-kind.entity";
 
 

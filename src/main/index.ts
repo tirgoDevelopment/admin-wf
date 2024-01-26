@@ -1,4 +1,4 @@
-import { Client, Driver, Role, Staff, Permission, TransportType, User, CargoType, CargoTypeGroup, CargoStatus, Currency, Subscription, Order, DriverTransport, TransportVerification, Transaction, CargoLoadMethod, CargoPackage, TransportKind } from "src/shared/entites";
+import { Client, Driver, Role, Staff, Permission, TransportType, User, CargoType, CargoTypeGroup, CargoStatus, Currency, Subscription, Order, DriverTransport, TransportVerification, Transaction, CargoLoadMethod, CargoPackage, TransportKind, OrderTransportKind } from "src/shared/entites";
 
 const entities = [
   Staff,
@@ -19,7 +19,8 @@ const entities = [
   CargoStatus,
   CargoLoadMethod,
   CargoPackage,
-  TransportKind
+  TransportKind,
+  OrderTransportKind
 ];
 
 export {
@@ -41,7 +42,8 @@ export {
   CargoStatus,
   CargoLoadMethod,
   CargoPackage,
-  TransportKind
+  TransportKind,
+  OrderTransportKind
 };
 export default entities;
 
@@ -96,7 +98,9 @@ export enum ResponseStauses {
 } 
 
 export enum CargoStatusCodes {
-  Created = 0,
+  Waiting = 0,
   Accepted = 1,
-  Canceled = 3
+  DriverCompleted = 2,
+  Delivered = 3,
+  Canceled = 4
 }
