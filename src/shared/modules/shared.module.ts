@@ -22,6 +22,7 @@ import {
   Config,
   Order
 } from '../entites/index'
+import { AwsService } from "../services/aws.service";
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -49,12 +50,14 @@ import {
   providers: [
     SundryService,
     RabbitMQSenderService,
-    RabbitMQConsumerService
+    RabbitMQConsumerService,
+    AwsService
   ],
   exports: [
     SundryService,
     RabbitMQSenderService,
-    RabbitMQConsumerService
+    RabbitMQConsumerService,
+    AwsService
   ]
 })
 export class SharedModule {
