@@ -1,6 +1,6 @@
 import { Injectable, HttpException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityNotFoundError, Repository } from 'typeorm';
+import { Between, EntityNotFoundError, Like, Repository } from 'typeorm';
 import { BpmResponse, Client, ResponseStauses, User } from '..';
 import { ClientDto } from './client.dto';
 import { AwsService } from 'src/shared/services/aws.service';
@@ -142,9 +142,25 @@ export class ClientsService {
     }
   }
 
-  async getAllClients(): Promise<BpmResponse> {
+  async getAllClients(id: number, firstname: string, phoneNumber: string, createdAtFrom: string, createdAtTo: string, lastLoginFrom: string, lastLoginTo: string): Promise<BpmResponse> {
     try {
-      const clients = await this.clientsRepository.find({ where: { deleted: false } });
+      let filterCriteria: Record<string, any> = { deleted: false };
+      if (id) {
+        filterCriteria.id = id;
+      }
+      if (firstname) {
+        filterCriteria.firstname = Like(`%${firstname}%`);
+      }
+      if (phoneNumber) {
+        filterCriteria.phoneNumber = Like(`%${phoneNumber}%`);
+      }
+      if (createdAtFrom && createdAtTo) {
+        filterCriteria.createdAt = Between(new Date(createdAtFrom), new Date(createdAtTo));
+      }
+      if (lastLoginFrom && lastLoginTo) {
+        filterCriteria.lastLogin = Between(new Date(lastLoginFrom), new Date(lastLoginTo));
+      }
+      const clients = await this.clientsRepository.find({ where: filterCriteria });
       if (!clients.length) {
         throw new NoContentException();
       }

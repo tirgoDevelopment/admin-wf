@@ -45,8 +45,19 @@ export class DriversController {
   }
 
   @Get('all')
-  async getAllDriver() {
-    return this.driversService.getAllDrivers();
+  async getAllDriver(
+    @Query('id') id: number,
+    @Query('firstname') firstname: string,
+    @Query('phoneNumber') phoneNumber: string,
+    @Query('transportKind') transportKindId: string,
+    @Query('subscriptionType') subscriptionTypeId: string,
+    @Query('createdAtFrom') createdAtFrom: string,
+    @Query('createdAtTo') createdAtTo: string,
+    @Query('lastLoginFrom') lastLoginFrom: string,
+    @Query('lastLoginTo') lastLoginTo: string,
+    @Query('statusId') statusId: string
+  ) {
+    return this.driversService.getAllDrivers(id, firstname, phoneNumber, transportKindId, subscriptionTypeId, createdAtFrom, createdAtTo, lastLoginFrom, lastLoginTo, statusId);
   }
 
   @Get('active')

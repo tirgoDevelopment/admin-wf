@@ -47,8 +47,17 @@ export class ClientsController {
   }
 
   @Get('all')
-  async getAllClient() {
-    return this.clientsService.getAllClients();
+  async getAllClient(
+    @Query('id') id: number,
+    @Query('firstname') firstname: string,
+    @Query('phoneNumber') phoneNumber: string,
+    @Query('createdAtFrom') createdAtFrom: string,
+    @Query('createdAtTo') createdAtTo: string,
+    @Query('lastLoginFrom') lastLoginFrom: string,
+    @Query('lastLoginTo') lastLoginTo: string,
+
+  ) {
+    return this.clientsService.getAllClients(id, firstname, phoneNumber, createdAtFrom, createdAtTo, lastLoginFrom, lastLoginTo);
   }
 
   @Get('active')

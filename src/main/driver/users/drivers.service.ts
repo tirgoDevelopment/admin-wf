@@ -1,6 +1,6 @@
 import { Injectable, HttpException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityNotFoundError, Repository } from 'typeorm';
+import { Between, EntityNotFoundError, Like, Repository } from 'typeorm';
 import { BpmResponse, Driver, ResponseStauses, User } from '../..';
 import { DriverDto } from './driver.dto';
 import { s3 } from 'src/shared/configs/aws-config';
@@ -138,8 +138,25 @@ export class DriversService {
     }
   }
 
-  async getAllDrivers(): Promise<BpmResponse> {
+  async getAllDrivers(id: number, firstname: string, phoneNumber: string, transportKindId: string, 
+    subscriptionTypeId: string, createdAtFrom: string, createdAtTo: string, lastLoginFrom: string, lastLoginTo: string, statusId: string): Promise<BpmResponse> {
     try {
+      let filterCriteria: Record<string, any> = { deleted: false };
+      if (id) {
+        filterCriteria.id = id;
+      }
+      if (firstname) {
+        filterCriteria.firstname = Like(`%${firstname}%`);
+      }
+      if (phoneNumber) {
+        filterCriteria.phoneNumber = Like(`%${phoneNumber}%`);
+      }
+      if (createdAtFrom && createdAtTo) {
+        filterCriteria.createdAt = Between(new Date(createdAtFrom), new Date(createdAtTo));
+      }
+      if (lastLoginFrom && lastLoginTo) {
+        filterCriteria.lastLogin = Between(new Date(lastLoginFrom), new Date(lastLoginTo));
+      }
       const drivers = await this.driversRepository.find({ where: { deleted: false } });
       if (!drivers.length) {
         throw new NoContentException();
