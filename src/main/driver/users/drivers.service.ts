@@ -1,7 +1,7 @@
 import { Injectable, HttpException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, EntityNotFoundError, Like, Repository } from 'typeorm';
-import { BpmResponse, Driver, ResponseStauses, User } from '../..';
+import { BpmResponse, Driver, ResponseStauses, Transaction, User } from '../..';
 import { DriverDto } from './driver.dto';
 import { s3 } from 'src/shared/configs/aws-config';
 import { InternalErrorException } from 'src/shared/exceptions/internal.exception';
@@ -12,6 +12,7 @@ export class DriversService {
   constructor(
     @InjectRepository(Driver) private readonly driversRepository: Repository<Driver>,
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    @InjectRepository(Transaction) private readonly transactionsRepository: Repository<Transaction>,
   ) { }
 
   async createDriver(files: any[], createDriverDto: DriverDto): Promise<Driver | null> {
@@ -139,11 +140,14 @@ export class DriversService {
   }
 
   async getAllDrivers(id: number, firstname: string, phoneNumber: string, transportKindId: string, 
-    subscriptionTypeId: string, createdAtFrom: string, createdAtTo: string, lastLoginFrom: string, lastLoginTo: string, statusId: string): Promise<BpmResponse> {
+    isSubscribed: boolean, createdAtFrom: string, createdAtTo: string, lastLoginFrom: string, lastLoginTo: string, state: string): Promise<BpmResponse> {
     try {
       let filterCriteria: Record<string, any> = { deleted: false };
       if (id) {
         filterCriteria.id = id;
+      }
+      if(transportKindId) {
+        filterCriteria.transportKind = { id: transportKindId }
       }
       if (firstname) {
         filterCriteria.firstname = Like(`%${firstname}%`);

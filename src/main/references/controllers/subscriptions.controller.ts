@@ -18,7 +18,13 @@ export class SubscriptionsController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  async createTransportType(@Body() createSubscriptionDto: SubscriptionDto) {
+  async createSubscription(@Body() createSubscriptionDto: SubscriptionDto) {
+    return this.subscriptionsService.createSubscription(createSubscriptionDto);
+  }
+
+  @Post('payment')
+  @UsePipes(ValidationPipe)
+  async createSubscriptionPayment(@Body() createSubscriptionDto: SubscriptionDto) {
     return this.subscriptionsService.createSubscription(createSubscriptionDto);
   }
 

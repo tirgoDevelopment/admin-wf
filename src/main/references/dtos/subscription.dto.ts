@@ -16,3 +16,14 @@ export class SubscriptionDto {
   @IsNotEmpty()
   duration: number;
 }
+
+export class SubscriptionPaymentDto {
+
+  id?: number;
+
+  @IsNotEmpty()
+  userId: string;
+
+  @IsNotEmpty()
+  price: number;
+}

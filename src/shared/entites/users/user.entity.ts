@@ -3,6 +3,7 @@ import { Staff } from '../staffs/staff.entity';
 import { Transaction } from '../transactions/transaction.entity';
 import { Client } from '../clients/client.entity';
 import { Driver } from '../driver/entities/driver.entity';
+import { SubscriptionPayment } from '../references/entities/subscription-payment.entity';
 
 @Entity()
 export class User {
@@ -26,6 +27,10 @@ export class User {
     @OneToOne(() => Driver, (driver) => driver.user, { cascade: true })
     @JoinColumn({ name: 'driver_id' })
     driver: Driver;
+
+    @OneToOne(() => SubscriptionPayment, (subscriptionPayment) => subscriptionPayment.user, { cascade: true })
+    @JoinColumn({ name: 'subscription_payment_id' })
+    subscriptionPayment: SubscriptionPayment;
 
 
     @OneToMany(() => Transaction, (transaction) => transaction.user)

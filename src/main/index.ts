@@ -1,4 +1,4 @@
-import { Client, Driver, Role, Staff, Permission, TransportType, User, CargoType, CargoTypeGroup, CargoStatus, Currency, Subscription, Order, DriverTransport, TransportVerification, Transaction, CargoLoadMethod, CargoPackage, TransportKind, OrderTransportKind } from "src/shared/entites";
+import { Client, Driver, Role, Staff, Permission, TransportType, User, CargoType, CargoTypeGroup, CargoStatus, Currency, Subscription, Order, DriverTransport, TransportVerification, Transaction, CargoLoadMethod, CargoPackage, TransportKind, OrderTransportKind, SubscriptionPayment } from "src/shared/entites";
 
 const entities = [
   Staff,
@@ -20,7 +20,8 @@ const entities = [
   CargoLoadMethod,
   CargoPackage,
   TransportKind,
-  OrderTransportKind
+  OrderTransportKind,
+  SubscriptionPayment
 ];
 
 export {
@@ -43,7 +44,8 @@ export {
   CargoLoadMethod,
   CargoPackage,
   TransportKind,
-  OrderTransportKind
+  OrderTransportKind,
+  SubscriptionPayment
 };
 export default entities;
 
