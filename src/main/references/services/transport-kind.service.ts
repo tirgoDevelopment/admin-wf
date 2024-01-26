@@ -19,9 +19,6 @@ export class TransportKindsService {
             const transportKind: TransportKind = new TransportKind();
             transportKind.name = createTransportKindDto.name;
             transportKind.isMode = createTransportKindDto.isMode;
-            transportKind.count = createTransportKindDto.count;
-            transportKind.from = createTransportKindDto.from; 
-            transportKind.to = createTransportKindDto.to; 
 
             const saveResult = await this.transportKindsRepository.save(transportKind);
             return new BpmResponse(true, null, [ResponseStauses.SuccessfullyCreated]);
@@ -36,9 +33,6 @@ export class TransportKindsService {
             const transportKind: TransportKind = await this.transportKindsRepository.findOneOrFail({ where: { id: updateTransportKindDto.id } })
             transportKind.name = updateTransportKindDto.name;
             transportKind.isMode = updateTransportKindDto.isMode;
-            transportKind.count = updateTransportKindDto.count;
-            transportKind.from = updateTransportKindDto.from; 
-            transportKind.to = updateTransportKindDto.to; 
 
             await this.transportKindsRepository.update({ id: transportKind.id }, transportKind);
 

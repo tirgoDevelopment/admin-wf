@@ -8,6 +8,8 @@ export class CargoTypeDto {
   @IsNotEmpty()
   name: string;
 
+  codeTNVED: string;
+
   @IsNotEmpty()
   cargoTypeGroupId: string;
   }

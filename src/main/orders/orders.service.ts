@@ -28,12 +28,11 @@ export class OrdersService {
       const offeredCurrency: Currency = await this.curreniesRepository.findOneOrFail({ where: { id: createOrderDto.offeredPriceCurrencyId } });
       const inAdvanceCurrency: Currency = await this.curreniesRepository.findOneOrFail({ where: { id: createOrderDto.inAdvancePriceCurrencyId } });
       const transportType: TransportType = await this.transportTypesRepository.findOneOrFail({ where: { id: createOrderDto.transportTypeId } });
-      const transportKind: TransportKind = await this.transportKindsRepository.findOneOrFail({ where: { id: createOrderDto.transportKindId } });
       const cargoType: CargoType = await this.cargoTyepesRepository.findOneOrFail({ where: { id: createOrderDto.cargoTypeId } });
       const loadingMethod: CargoLoadMethod = await this.cargoLoadingMethodsRepository.findOneOrFail({ where: { id: createOrderDto.loadingMethodId } });
       const cargoPackage: CargoPackage = await this.cargoPackagesRepository.findOneOrFail({ where: { id: createOrderDto.cargoPackageId } });
-      const cargoStatus: CargoStatus = await this.cargoStatusesRepository.findOneOrFail({ where: { code: CargoStatusCodes.Created } });
-
+      const cargoStatus: CargoStatus = await this.cargoStatusesRepository.findOneOrFail({ where: { code: CargoStatusCodes.Waiting } });
+      const transportKinds = await this.transportKindsRepository.findByIds(createOrderDto.transportKindIds);
       const order: Order = new Order();
       order.client = client;
       order.loadingMethod = loadingMethod;
@@ -41,14 +40,13 @@ export class OrdersService {
       order.inAdvancePriceCurrency = inAdvanceCurrency;
       order.offeredPriceCurrency = offeredCurrency;
       order.transportType = transportType;
-      order.transportKind = transportKind;
+      order.transportKinds = transportKinds;
       order.cargoType = cargoType;
       order.cargoStatus = cargoStatus;
       order.loadingLocation = createOrderDto.loadingLocation;
       order.deliveryLocation = createOrderDto.deliveryLocation;
       order.customsPlaceLocation = createOrderDto.customsPlaceLocation;
       order.customsClearancePlaceLocation = createOrderDto.customsClearancePlaceLocation;
-      order.additionalLoadingLication = createOrderDto.additionalLoadingLication;
       order.additionalLoadingLocation = createOrderDto.additionalLoadingLocation;
       order.isAdr = createOrderDto.isAdr;
       order.isCarnetTir = createOrderDto.isCarnetTir;
@@ -64,6 +62,9 @@ export class OrdersService {
       order.cargiWidth = createOrderDto.cargiWidth;
       order.cargoHeight = createOrderDto.cargoHeight;
       order.volume = createOrderDto.volume;
+      order.refrigeratorFrom = createOrderDto.refrigeratorFrom;
+      order.refrigeratorTo = createOrderDto.refrigeratorTo;
+      order.refrigeratorCount = createOrderDto.refrigeratorCount;
 
       await this.ordersRepository.save(order);
       return new BpmResponse(true, null, [ResponseStauses.SuccessfullyCreated]);
@@ -98,7 +99,6 @@ export class OrdersService {
       order.deliveryLocation = updateOrderDto.deliveryLocation || order.deliveryLocation;
       order.customsPlaceLocation = updateOrderDto.customsPlaceLocation || order.customsPlaceLocation;
       order.customsClearancePlaceLocation = updateOrderDto.customsClearancePlaceLocation || order.customsClearancePlaceLocation;
-      order.additionalLoadingLication = updateOrderDto.additionalLoadingLication || order.additionalLoadingLication;
       order.additionalLoadingLocation = updateOrderDto.additionalLoadingLocation || order.additionalLoadingLocation;
       order.isAdr = updateOrderDto.isAdr || order.isAdr;
       order.isCarnetTir = updateOrderDto.isCarnetTir || order.isCarnetTir;
@@ -114,6 +114,9 @@ export class OrdersService {
       order.cargiWidth = updateOrderDto.cargiWidth || order.cargiWidth;
       order.cargoHeight = updateOrderDto.cargoHeight || order.cargoHeight;
       order.volume = updateOrderDto.volume || order.volume;
+      order.refrigeratorFrom = updateOrderDto.refrigeratorFrom || order.refrigeratorFrom;
+      order.refrigeratorTo = updateOrderDto.refrigeratorTo || order.refrigeratorTo;
+      order.refrigeratorCount = updateOrderDto.refrigeratorCount || order.refrigeratorCount;
 
       if (updateOrderDto.clientId) {
         order.client = await this.clientsRepository.findOneOrFail({ where: { id: updateOrderDto.clientId } });
@@ -130,8 +133,8 @@ export class OrdersService {
         order.transportType = await this.transportTypesRepository.findOneOrFail({ where: { id: updateOrderDto.transportTypeId } });
 
       }
-      if (updateOrderDto.transportKindId) {
-        order.transportKind = await this.transportKindsRepository.findOneOrFail({ where: { id: updateOrderDto.transportKindId } });
+      if (updateOrderDto.transportKindIds.length) {
+        order.transportKinds = await this.transportKindsRepository.findByIds(updateOrderDto.transportKindIds);
 
       }
       if (updateOrderDto.cargoTypeId) {
@@ -190,9 +193,38 @@ export class OrdersService {
     }
   }
 
-  async getAllOrders(): Promise<BpmResponse> {
+  async getAllOrders(orderId: number, clientId: number, statusId: string, loadingLocation: string, deliveryLocation: string, transportKindId: string, transportTypeId: string, createdAt: string, sendDate: string): Promise<BpmResponse> {
     try {
-      const orders = await this.ordersRepository.find({ where: { deleted: false }, relations: ['Client', 'Currency', 'CargoType', 'CargoPackage', 'TransportType', 'CargoLoadMethod', 'TransportKind'] });
+      const filter: any = {};
+      if(transportTypeId) {
+        filter.transportType = { id: transportTypeId }
+      }
+      if(orderId) {
+        filter.id = { id: orderId }
+      }
+      if(transportKindId) {
+        filter.transportKind = { id: transportKindId }
+      }
+      if(clientId) {
+        filter.client = { id: clientId}
+      }
+      if(statusId) {
+        filter.cargoStatus = { id: statusId}
+      }
+      if(loadingLocation) {
+        filter.loadingLocation = loadingLocation
+      }
+      if(deliveryLocation) {
+        filter.deliveryLocation = deliveryLocation
+      }
+      if(createdAt) {
+        filter.createdAt = createdAt
+      }
+      if(sendDate) {
+        filter.sendDate = sendDate
+      }
+      filter.deleted = false;
+      const orders = await this.ordersRepository.find({ where: filter, relations: ['Client', 'Currency', 'CargoType', 'CargoPackage', 'TransportType', 'CargoLoadMethod', 'TransportKind'] });
       if (!orders.length) {
         throw new NoContentException();
       }

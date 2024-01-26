@@ -20,7 +20,6 @@ export class OrderDto {
 
   customsPlaceLocation?: string;
   customsClearancePlaceLocation?: string;
-  additionalLoadingLication?: string;
   additionalLoadingLocation?: string;
   isAdr?: boolean;
   isCarnetTir?: string;
@@ -31,6 +30,9 @@ export class OrderDto {
   inAdvancePrice?: number;
   offeredPriceCurrencyId: string;
   inAdvancePriceCurrencyId: string;
+  refrigeratorFrom?: string;
+  refrigeratorTo?: string;
+  refrigeratorCount?: number;
 
   @IsDate()
   @IsNotEmpty()
@@ -44,9 +46,8 @@ export class OrderDto {
   @IsNotEmpty()
   transportTypeId: string;
 
-  @IsUUID()
   @IsNotEmpty()
-  transportKindId: string;
+  transportKindIds: string[];
 
   @IsUUID()
   @IsNotEmpty()
