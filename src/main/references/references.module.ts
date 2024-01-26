@@ -10,13 +10,15 @@ import { CurrenciesController } from "./controllers/currencies.controller";
 import { CurrenciesService } from "./services/currency.service";
 import { SubscriptionsController } from "./controllers/subscriptions.controller";
 import { SubscriptionsService } from "./services/subscription.service";
-import { CargoType, CargoTypeGroup, Currency, Subscription, TransportType, TransportKind } from "..";
+import { CargoType, CargoTypeGroup, Currency, Subscription, TransportType, TransportKind, CargoStatus } from "..";
 import { TransportKindsController } from "./controllers/transport-kinds.controller";
 import { TransportKindsService } from "./services/transport-kind.service";
+import { CargoStatusesController } from "./controllers/cargo-status.controller";
+import { CargoStatusesService } from "./services/cargo-status.service";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TransportType, CargoType, CargoTypeGroup, Currency, Subscription, TransportKind]),
+    TypeOrmModule.forFeature([TransportType, CargoType, CargoTypeGroup, Currency, Subscription, TransportKind, CargoStatus]),
   ],
   controllers: [
     TransportTypesController,
@@ -24,7 +26,8 @@ import { TransportKindsService } from "./services/transport-kind.service";
     CargoTypeGroupsController,
     CurrenciesController,
     SubscriptionsController,
-    TransportKindsController
+    TransportKindsController,
+    CargoStatusesController
   ],
   providers: [
     TransportTypesService,
@@ -32,10 +35,11 @@ import { TransportKindsService } from "./services/transport-kind.service";
     CargoTypeGroupsService,
     CurrenciesService,
     SubscriptionsService,
-    TransportKindsService
+    TransportKindsService,
+    CargoStatusesService
   ],
   exports: [
-    TypeOrmModule.forFeature([TransportType, CargoType, CargoTypeGroup, Currency, Subscription, TransportKind]),
+    TypeOrmModule.forFeature([TransportType, CargoType, CargoTypeGroup, Currency, Subscription, TransportKind, CargoStatus]),
     TransportTypesService,
     CargoTypesService,
     CargoTypeGroupsService,
