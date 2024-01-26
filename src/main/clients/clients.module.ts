@@ -4,11 +4,11 @@ import { ClientsController } from "./clients.controller";
 import { ClientsService } from "./clients.service";
 import { SharedModule } from "src/shared/modules/shared.module";
 import { UsersModule } from "../users/users.module";
-import { Client } from "..";
+import { Client, User } from "..";
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Client]),
+        TypeOrmModule.forFeature([Client, User]),
         SharedModule,
         UsersModule
     ],
@@ -19,7 +19,7 @@ import { Client } from "..";
         ClientsService,
     ],
     exports: [
-        TypeOrmModule.forFeature([Client]),
+        TypeOrmModule.forFeature([Client, User]),
         ClientsService
     ]
 })
