@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { BpmResponse, ResponseStauses, TransportKind } from 'src/main/index';
 import { TransportKindDto } from '../dtos/transport-kind.dto';
-import { InternalErrorException } from 'src/shared/exceptions/internal.exception';
-import { BadRequestException } from 'src/shared/exceptions/bad-request.exception';
-import { NoContentException } from 'src/shared/exceptions/no-content.exception';
+import { BpmResponse, ResponseStauses, TransportKind, InternalErrorException, NoContentException, BadRequestException } from 'src/main/index';
 
 @Injectable()
 export class TransportKindsService {

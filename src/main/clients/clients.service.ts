@@ -4,10 +4,7 @@ import { Between, EntityNotFoundError, Like, Repository } from 'typeorm';
 import { BpmResponse, Client, ResponseStauses, User } from '..';
 import { ClientDto } from './client.dto';
 import { AwsService } from 'src/shared/services/aws.service';
-import { InternalErrorException } from 'src/shared/exceptions/internal.exception';
-import { NotFoundException } from 'src/shared/exceptions/not-found.exception';
-import { NoContentException } from 'src/shared/exceptions/no-content.exception';
-import { BadRequestException } from 'src/shared/exceptions/bad-request.exception';
+import { InternalErrorException, NotFoundException, NoContentException, BadRequestException } from '..';
 
 @Injectable()
 export class ClientsService {

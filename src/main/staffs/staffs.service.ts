@@ -2,12 +2,8 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SundryService } from 'src/shared/services/sundry.service';
 import { EntityNotFoundError, Repository } from 'typeorm';
-import { BpmResponse, ResponseStauses, Role, Staff, User } from '..';
+import { BpmResponse, ResponseStauses, Staff, Role, User, InternalErrorException, NoContentException, BadRequestException, NotFoundException } from 'src/main/index';
 import { CreateStaffDto, UpdateStaffDto } from './staff.dto';
-import { InternalErrorException } from 'src/shared/exceptions/internal.exception';
-import { NoContentException } from 'src/shared/exceptions/no-content.exception';
-import { BadRequestException } from 'src/shared/exceptions/bad-request.exception';
-import { NotFoundException } from '../../shared/exceptions/not-found.exception';
 
 @Injectable()
 export class StaffsService {
@@ -59,6 +55,8 @@ export class StaffsService {
         // Other error (handle accordingly)
         throw new InternalErrorException(ResponseStauses.InternalServerError);
       }
+    } finally {
+      await queryRunner.release();
     }
   }
 

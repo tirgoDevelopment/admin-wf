@@ -1,16 +1,15 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityNotFoundError, Repository } from 'typeorm';
-import { InternalErrorException } from 'src/shared/exceptions/internal.exception';
-import { NoContentException } from 'src/shared/exceptions/no-content.exception';
-import { BadRequestException } from 'src/shared/exceptions/bad-request.exception';
-import { SubscriptionDto } from '../dtos/subscription.dto';
-import { BpmResponse, ResponseStauses, Subscription } from 'src/main/index';
+import { SubscriptionDto, SubscriptionPaymentDto } from '../dtos/subscription.dto';
+import { BpmResponse, ResponseStauses, Subscription, SubscriptionPayment, User, InternalErrorException, NoContentException, BadRequestException } from 'src/main/index';
 
 @Injectable()
 export class SubscriptionsService {
   constructor(
     @InjectRepository(Subscription) private readonly subscriptionRepository: Repository<Subscription>,
+    @InjectRepository(SubscriptionPayment) private readonly subscriptionPaymentsRepository: Repository<SubscriptionPayment>,
+    @InjectRepository(User) private readonly usersRepository: Repository<User>,
   ) { }
 
   async createSubscription(createSubscriptionDto: SubscriptionDto): Promise<BpmResponse> {
@@ -22,12 +21,38 @@ export class SubscriptionsService {
 
       const newSubscription = await this.subscriptionRepository.save(subscription);
 
-      const resClient = await this.subscriptionRepository.update({ id: subscription.id }, newSubscription);
+      const resClient = await this.subscriptionRepository.save(newSubscription);
       return new BpmResponse(true, null, [ResponseStauses.SuccessfullyCreated]);
     } catch (err: any) {
       if (err.name === "EntityNotFoundError") {
         // Subscription not found
        throw new NoContentException();
+      } else {
+        // Other error (handle accordingly)
+        throw new InternalErrorException(ResponseStauses.InternalServerError);
+      }
+    }
+  }
+
+  async createSubscriptionPayment(createSubscriptionPaymentDto: SubscriptionPaymentDto): Promise<BpmResponse> {
+    try {
+      const subscriptionPayment: SubscriptionPayment = new SubscriptionPayment();
+      const subscription = await this.subscriptionRepository.findOneOrFail({ where: { id: createSubscriptionPaymentDto.subscriptionId } });
+      const user = await this.usersRepository.findOneOrFail({ where: { id: createSubscriptionPaymentDto.userId } });
+      subscriptionPayment.user = user;
+      subscriptionPayment.subscription = subscription;
+
+      const newSubscriptionPayment = await this.subscriptionPaymentsRepository.save(subscriptionPayment);
+      user.subscriptionPayment = newSubscriptionPayment;
+      await this.usersRepository.save(user);
+      return new BpmResponse(true, null, [ResponseStauses.SuccessfullyUpdated]);
+    } catch (err: any) {
+      if (err.name === "EntityNotFoundError") {
+        if (err.message.includes('usersRepository')) { 
+          throw new NotFoundException(ResponseStauses.UserNotFound);
+        } else if (err.message.includes('subscriptionRepository')){
+          throw new NotFoundException(ResponseStauses.SubscriptionNotFound);
+        }
       } else {
         // Other error (handle accordingly)
         throw new InternalErrorException(ResponseStauses.InternalServerError);

@@ -1,18 +1,16 @@
 import { Injectable, HttpException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, EntityNotFoundError, Like, Repository } from 'typeorm';
-import { BpmResponse, Driver, ResponseStauses, Transaction, User } from '../..';
+import { Between, Like, Repository } from 'typeorm';
+import { BpmResponse, Driver, ResponseStauses, User, InternalErrorException, NoContentException } from '../..';
 import { DriverDto } from './driver.dto';
 import { s3 } from 'src/shared/configs/aws-config';
-import { InternalErrorException } from 'src/shared/exceptions/internal.exception';
-import { NoContentException } from 'src/shared/exceptions/no-content.exception';
 
 @Injectable()
 export class DriversService {
   constructor(
     @InjectRepository(Driver) private readonly driversRepository: Repository<Driver>,
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
-    @InjectRepository(Transaction) private readonly transactionsRepository: Repository<Transaction>,
+    // @InjectRepository(Transaction) private readonly transactionsRepository: Repository<Transaction>,
   ) { }
 
   async createDriver(files: any[], createDriverDto: DriverDto): Promise<Driver | null> {

@@ -3,9 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BpmResponse, CargoStatus, ResponseStauses } from 'src/main/index';
 import { CargoStatusDto } from '../dtos/cargo-status.dto';
-import { InternalErrorException } from 'src/shared/exceptions/internal.exception';
-import { BadRequestException } from 'src/shared/exceptions/bad-request.exception';
-import { NoContentException } from 'src/shared/exceptions/no-content.exception';
+import { InternalErrorException, NoContentException, BadRequestException } from '../../index';
 
 @Injectable()
 export class CargoStatusesService {

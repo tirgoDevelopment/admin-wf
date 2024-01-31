@@ -13,7 +13,7 @@ export class SubscriptionDto {
   price: number;
 
   @IsNumber()
-  @IsNotEmpty()
+  @IsNotEmpty() 
   duration: number;
 }
 
@@ -22,8 +22,8 @@ export class SubscriptionPaymentDto {
   id?: number;
 
   @IsNotEmpty()
-  userId: string;
+  userId: number;
 
   @IsNotEmpty()
-  price: number;
+  subscriptionId: number;
 }

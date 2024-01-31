@@ -1,12 +1,8 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { BpmResponse, CargoLoadMethod, CargoPackage, CargoStatus, CargoStatusCodes, CargoType, Client, Currency, ResponseStauses, TransportKind, TransportType } from '..';
-import { Order } from '../../shared/entites/orders/entities/order.entity';
+import { In, Repository } from 'typeorm';
+import { BpmResponse, CargoLoadMethod, Order, CargoPackage, CargoStatus, CargoStatusCodes, CargoType, Client, Currency, ResponseStauses, TransportKind, TransportType, BadRequestException, InternalErrorException, NoContentException } from '..';
 import { OrderDto } from './order.dto';
-import { InternalErrorException } from 'src/shared/exceptions/internal.exception';
-import { BadRequestException } from 'src/shared/exceptions/bad-request.exception';
-import { NoContentException } from 'src/shared/exceptions/no-content.exception';
 
 @Injectable()
 export class OrdersService {
@@ -32,7 +28,7 @@ export class OrdersService {
       const loadingMethod: CargoLoadMethod = await this.cargoLoadingMethodsRepository.findOneOrFail({ where: { id: createOrderDto.loadingMethodId } });
       const cargoPackage: CargoPackage = await this.cargoPackagesRepository.findOneOrFail({ where: { id: createOrderDto.cargoPackageId } });
       const cargoStatus: CargoStatus = await this.cargoStatusesRepository.findOneOrFail({ where: { code: CargoStatusCodes.Waiting } });
-      const transportKinds = await this.transportKindsRepository.findByIds(createOrderDto.transportKindIds);
+      const transportKinds = await this.transportKindsRepository.find({ where: { id: In(createOrderDto.transportKindIds) } });
       const order: Order = new Order();
       order.client = client;
       order.loadingMethod = loadingMethod;

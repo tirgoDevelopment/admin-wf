@@ -5,10 +5,7 @@ import { s3 } from 'src/shared/configs/aws-config';
 import { DriverTransportDto } from './dtos/driver-transport.dto';
 import { BpmResponse, Driver, DriverTransport, ResponseStauses, TransportType, TransportVerification } from 'src/main//index';
 import { TransportVerificationDto } from './dtos/driver-verification.dto';
-import { BadRequestException } from 'src/shared/exceptions/bad-request.exception';
-import { NoContentException } from 'src/shared/exceptions/no-content.exception';
-import { InternalErrorException } from 'src/shared/exceptions/internal.exception';
-import { NotFoundException } from 'src/shared/exceptions/not-found.exception';
+import { InternalErrorException, NotFoundException, NoContentException, BadRequestException } from '../../index';
 
 @Injectable()
 export class TransportsService {
